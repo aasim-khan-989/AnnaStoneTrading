@@ -1,7 +1,8 @@
 
+
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./App.css";
 
 function App() {
@@ -33,6 +34,22 @@ function App() {
 
   const [rows, setRows] = useState(createRows());
   const [rate, setRate] = useState("");
+
+  /* ---------- AUTO FOCUS LOGIC ---------- */
+  const inputRefs = useRef([]);
+
+  const focusNext = (index) => {
+    if (inputRefs.current[index + 1]) {
+      inputRefs.current[index + 1].focus();
+    }
+  };
+
+  const autoJump = (value, refIndex) => {
+    if (value === " " || value.length >= 2) {
+      focusNext(refIndex);
+    }
+  };
+  /* -------------------------------------- */
 
   // ================= PDF =================
   const downloadPDF = () => {
@@ -159,64 +176,86 @@ function App() {
       <div className="table-wrapper">
         <table>
           <thead>
-      <tr>
-        <th colSpan="2">Length</th>
-        <th rowSpan="2">×</th>
-        <th colSpan="2">Breadth</th>
-        <th rowSpan="2">Sq Ft</th>
-        <th rowSpan="2">Action</th>
-      </tr>
-      <tr>
-        <th>Ft</th>
-        <th>In</th>
-        <th>Ft</th>
-        <th>In</th>
-      </tr>
-    </thead>
+            <tr>
+              <th colSpan="2">Length</th>
+              <th rowSpan="2">×</th>
+              <th colSpan="2">Breadth</th>
+              <th rowSpan="2">Sq Ft</th>
+              <th rowSpan="2">Action</th>
+            </tr>
+            <tr>
+              <th>Ft</th>
+              <th>In</th>
+              <th>Ft</th>
+              <th>In</th>
+            </tr>
+          </thead>
+
           <tbody>
             {rows.map((row, i) => (
               <tr key={i}>
                 <td>
                   <input
+                    ref={(el) => (inputRefs.current[i * 4] = el)}
                     className="calc-input"
-                    placeholder="Ft"
                     value={row.lengthFt}
-                    onChange={(e) =>
-                      handleChange(i, "lengthFt", e.target.value)
+                    onChange={(e) => {
+                      handleChange(i, "lengthFt", e.target.value);
+                      autoJump(e.target.value, i * 4);
+                    }}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && focusNext(i * 4)
                     }
                   />
                 </td>
+
                 <td>
                   <input
+                    ref={(el) => (inputRefs.current[i * 4 + 1] = el)}
                     className="calc-input"
-                    placeholder="In"
                     value={row.lengthIn}
-                    onChange={(e) =>
-                      handleChange(i, "lengthIn", e.target.value)
+                    onChange={(e) => {
+                      handleChange(i, "lengthIn", e.target.value);
+                      autoJump(e.target.value, i * 4 + 1);
+                    }}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && focusNext(i * 4 + 1)
                     }
                   />
                 </td>
+
                 <td>×</td>
+
                 <td>
                   <input
+                    ref={(el) => (inputRefs.current[i * 4 + 2] = el)}
                     className="calc-input"
-                    placeholder="Ft"
                     value={row.breadthFt}
-                    onChange={(e) =>
-                      handleChange(i, "breadthFt", e.target.value)
+                    onChange={(e) => {
+                      handleChange(i, "breadthFt", e.target.value);
+                      autoJump(e.target.value, i * 4 + 2);
+                    }}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && focusNext(i * 4 + 2)
                     }
                   />
                 </td>
+
                 <td>
                   <input
+                    ref={(el) => (inputRefs.current[i * 4 + 3] = el)}
                     className="calc-input"
-                    placeholder="In"
                     value={row.breadthIn}
-                    onChange={(e) =>
-                      handleChange(i, "breadthIn", e.target.value)
+                    onChange={(e) => {
+                      handleChange(i, "breadthIn", e.target.value);
+                      autoJump(e.target.value, i * 4 + 3);
+                    }}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && focusNext(i * 4 + 3)
                     }
                   />
                 </td>
+
                 <td>{row.sqft}</td>
                 <td>
                   <button onClick={() => deleteRow(i)}>❌</button>
@@ -226,25 +265,23 @@ function App() {
           </tbody>
         </table>
       </div>
-            <button className="add-btn" onClick={addRow}>Add Piece</button>
 
-          <div className="summary-box">
-            <label>Rate (₹ / Sq Ft)</label>
-            <input
-              className="rate-input"
-              placeholder="Enter rate"
-              value={rate}
-              onChange={(e) => setRate(e.target.value)}
-            />
+      <button className="add-btn" onClick={addRow}>Add Piece</button>
 
-            <p>Total Sq Ft: {totalSqft.toFixed(2)}</p>
-            <h2>Grand Total ₹ {grandTotal.toFixed(2)}</h2>
-          </div>
+      <div className="summary-box">
+        <label>Rate (₹ / Sq Ft)</label>
+        <input
+          className="rate-input"
+          value={rate}
+          onChange={(e) => setRate(e.target.value)}
+        />
+        <p>Total Sq Ft: {totalSqft.toFixed(2)}</p>
+        <h2>Grand Total ₹ {grandTotal.toFixed(2)}</h2>
+      </div>
 
-          <button className="pdf-btn" onClick={downloadPDF}>Download PDF</button>
-
-              </div>
-            );
-          }
+      <button className="pdf-btn" onClick={downloadPDF}>Download PDF</button>
+    </div>
+  );
+}
 
 export default App;
