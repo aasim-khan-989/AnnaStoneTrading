@@ -230,3 +230,40 @@ input:focus {
     font-size: 18px;
   }
 }
+
+@media (max-width: 600px) {
+  th, td {
+    font-size: 12px;
+    padding: 6px;
+  }
+  input {
+    width: 50px;
+  }
+  .multiply {
+    font-size: 16px;
+  }
+}
+
+
+/* Compact calculator-style input grouping */
+.input-pair {
+  display: flex;
+  gap: 4px; /* space between ft and in */
+  justify-content: center;
+}
+
+.input-pair input {
+  width: 50px;
+  padding: 6px;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Smaller on mobile */
+@media (max-width: 480px) {
+  .input-pair input {
+    width: 40px;
+    padding: 4px;
+  }
+}
