@@ -1,4 +1,4 @@
-// … your existing imports and state logic remain the same …
+
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import React, { useState } from "react";
@@ -14,28 +14,41 @@ function App() {
       sqft: 0
     }));
 
+  const [customerName, setCustomerName] = useState("");
+  const [invoiceDate, setInvoiceDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+
   const [stoneType, setStoneType] = useState("");
   const [customStoneType, setCustomStoneType] = useState("");
+
   const popularStones = [
     "Granite",
     "Granite - Pearl Black",
     "Granite - Z Black",
-    "Granite - telephone Black",
-    "Granite - Steal Black",
-    "Kadapa Stone "
+    "Granite - Telephone Black",
+    "Granite - Steel Black",
+    "Kadapa Stone"
   ];
+
   const [rows, setRows] = useState(createRows());
   const [rate, setRate] = useState("");
 
   // ================= PDF =================
   const downloadPDF = () => {
     const doc = new jsPDF();
+
     doc.setFontSize(18);
-    doc.text("ANNA STONE - Granite Invoice", 14, 20);
+    doc.text("ANNA STONE - Invoice", 14, 20);
+
     doc.setFontSize(12);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 30);
-    const finalStoneType = stoneType === "custom" ? customStoneType : stoneType;
-    if (finalStoneType) doc.text(`Stone Type: ${finalStoneType}`, 14, 38);
+    doc.text(`Customer: ${customerName || "-"}`, 14, 30);
+    doc.text(`Date: ${invoiceDate}`, 14, 38);
+
+    const finalStoneType =
+      stoneType === "custom" ? customStoneType : stoneType;
+    if (finalStoneType)
+      doc.text(`Stone Type: ${finalStoneType}`, 14, 46);
 
     const tableColumn = ["Length", "Breadth", "Sq Ft"];
     const tableRows = [];
@@ -50,437 +63,173 @@ function App() {
       }
     });
 
-    autoTable(doc, { startY: 46, head: [tableColumn], body: tableRows });
+    autoTable(doc, { startY: 54, head: [tableColumn], body: tableRows });
 
-    const finalY = doc.lastAutoTable.finalY || 40;
+    const finalY = doc.lastAutoTable.finalY || 60;
+
     doc.text(`Total Sq Ft: ${totalSqft.toFixed(2)}`, 14, finalY + 10);
-    doc.text(`Rate: Rs. ${rate}`, 14, finalY + 18);
-    doc.text(`Grand Total: Rs. ${grandTotal.toFixed(2)}`, 14, finalY + 26);
-    doc.save("Granite_Invoice.pdf");
+    doc.text(`Rate: ₹ ${rate}`, 14, finalY + 18);
+    doc.text(`Grand Total: ₹ ${grandTotal.toFixed(2)}`, 14, finalY + 26);
+
+    doc.save("Stone_Invoice.pdf");
   };
 
-  // ================= CALCULATION =================
+  // ================= CALC =================
   const handleChange = (index, field, value) => {
     const updatedRows = [...rows];
     updatedRows[index][field] = value;
 
-    const lengthFt = parseFloat(updatedRows[index].lengthFt) || 0;
-    const lengthIn = parseFloat(updatedRows[index].lengthIn) || 0;
-    const breadthFt = parseFloat(updatedRows[index].breadthFt) || 0;
-    const breadthIn = parseFloat(updatedRows[index].breadthIn) || 0;
+    const lft = parseFloat(updatedRows[index].lengthFt) || 0;
+    const lin = parseFloat(updatedRows[index].lengthIn) || 0;
+    const bft = parseFloat(updatedRows[index].breadthFt) || 0;
+    const bin = parseFloat(updatedRows[index].breadthIn) || 0;
 
-    if (lengthFt || lengthIn || breadthFt || breadthIn) {
-      const totalLengthInches = lengthFt * 12 + lengthIn + 1;
-      const totalBreadthInches = breadthFt * 12 + breadthIn + 1;
-      updatedRows[index].sqft = ((totalLengthInches * totalBreadthInches) / 144).toFixed(2);
+    if (lft || lin || bft || bin) {
+      const L = lft * 12 + lin + 1;
+      const B = bft * 12 + bin + 1;
+      updatedRows[index].sqft = ((L * B) / 144).toFixed(2);
     } else updatedRows[index].sqft = 0;
 
     setRows(updatedRows);
   };
 
-  const addRow = () => setRows([...rows, { lengthFt: "", lengthIn: "", breadthFt: "", breadthIn: "", sqft: 0 }]);
-  const deleteRow = (index) => setRows(rows.filter((_, i) => i !== index));
+  const addRow = () =>
+    setRows([
+      ...rows,
+      { lengthFt: "", lengthIn: "", breadthFt: "", breadthIn: "", sqft: 0 }
+    ]);
 
-  const totalSqft = rows.reduce((sum, row) => sum + parseFloat(row.sqft || 0), 0);
+  const deleteRow = (i) => setRows(rows.filter((_, idx) => idx !== i));
+
+  const totalSqft = rows.reduce((s, r) => s + parseFloat(r.sqft || 0), 0);
   const grandTotal = totalSqft * (parseFloat(rate) || 0);
 
-  // ================= UI =================
   return (
     <div className="container">
-      <h1>ANNA STONE TRADING CALCULATOR</h1>
+      <h1>ANNA STONE CALCULATOR</h1>
 
-      <div className="top-row">
-        <div className="stone-type-wrapper">
-          <h2>Stone Type</h2>
-          <select value={stoneType} onChange={(e) => setStoneType(e.target.value)}>
-            <option value="">Select Stone</option>
-            {popularStones.map((stone, i) => <option key={i} value={stone}>{stone}</option>)}
-            <option value="custom">Custom</option>
-          </select>
-          {stoneType === "custom" && (
-            <input
-              type="text"
-              placeholder="Enter stone name"
-              value={customStoneType}
-              onChange={(e) => setCustomStoneType(e.target.value)}
-            />
-          )}
+      {/* HEADER */}
+      <div className="client-wrapper">
+        <div className="client-field">
+          <label>Customer Name</label>
+          <input
+            className="full-input"
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+          />
+        </div>
+
+        <div className="client-field">
+          <label>Date</label>
+          <input
+            className="full-input"
+            type="date"
+            value={invoiceDate}
+            onChange={(e) => setInvoiceDate(e.target.value)}
+          />
         </div>
       </div>
 
+      {/* STONE TYPE */}
+      <div className="stone-type-wrapper">
+        <label>Stone Type</label>
+        <select
+          className="full-input"
+          value={stoneType}
+          onChange={(e) => setStoneType(e.target.value)}
+        >
+          <option value="">Select</option>
+          {popularStones.map((s, i) => (
+            <option key={i}>{s}</option>
+          ))}
+          <option value="custom">Custom</option>
+        </select>
+
+        {stoneType === "custom" && (
+          <input
+            className="full-input"
+            placeholder="Enter stone"
+            value={customStoneType}
+            onChange={(e) => setCustomStoneType(e.target.value)}
+          />
+        )}
+      </div>
+
+      {/* TABLE */}
       <div className="table-wrapper">
         <table>
-          <thead>
-            <tr>
-              <th colSpan="2">Length</th>
-              <th rowSpan="2">×</th>
-              <th colSpan="2">Breadth</th>
-              <th rowSpan="2">Sq Ft</th>
-              <th rowSpan="2">Action</th>
-            </tr>
-            <tr>
-              <th>Ft</th>
-              <th>In</th>
-              <th>Ft</th>
-              <th>In</th>
-            </tr>
-          </thead>
           <tbody>
-            {rows.map((row, index) => (
-              <tr key={index}>
-                <td colSpan="2">
-                  <div className="input-pair">
-                    <input
-                      type="number"
-                      placeholder="Ft"
-                      value={row.lengthFt}
-                      onChange={(e) => handleChange(index, "lengthFt", e.target.value)}
-                    />
-                    <input
-                      type="number"
-                      placeholder="In"
-                      value={row.lengthIn}
-                      onChange={(e) => handleChange(index, "lengthIn", e.target.value)}
-                    />
-                  </div>
-                </td>
-                <td className="multiply">×</td>
-                <td colSpan="2">
-                  <div className="input-pair">
-                    <input
-                      type="number"
-                      placeholder="Ft"
-                      value={row.breadthFt}
-                      onChange={(e) => handleChange(index, "breadthFt", e.target.value)}
-                    />
-                    <input
-                      type="number"
-                      placeholder="In"
-                      value={row.breadthIn}
-                      onChange={(e) => handleChange(index, "breadthIn", e.target.value)}
-                    />
-                  </div>
-                </td>
-                <td className="sqft-cell">{row.sqft}</td>
+            {rows.map((row, i) => (
+              <tr key={i}>
                 <td>
-                  <button className="delete-btn" onClick={() => deleteRow(index)}>❌</button>
+                  <input
+                    className="calc-input"
+                    placeholder="Ft"
+                    value={row.lengthFt}
+                    onChange={(e) =>
+                      handleChange(i, "lengthFt", e.target.value)
+                    }
+                  />
+                </td>
+                <td>
+                  <input
+                    className="calc-input"
+                    placeholder="In"
+                    value={row.lengthIn}
+                    onChange={(e) =>
+                      handleChange(i, "lengthIn", e.target.value)
+                    }
+                  />
+                </td>
+                <td>×</td>
+                <td>
+                  <input
+                    className="calc-input"
+                    placeholder="Ft"
+                    value={row.breadthFt}
+                    onChange={(e) =>
+                      handleChange(i, "breadthFt", e.target.value)
+                    }
+                  />
+                </td>
+                <td>
+                  <input
+                    className="calc-input"
+                    placeholder="In"
+                    value={row.breadthIn}
+                    onChange={(e) =>
+                      handleChange(i, "breadthIn", e.target.value)
+                    }
+                  />
+                </td>
+                <td>{row.sqft}</td>
+                <td>
+                  <button onClick={() => deleteRow(i)}>❌</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+            <button className="add-btn" onClick={addRow}>Add Piece</button>
 
-      <div className="button-row">
-        <button className="add-btn" onClick={addRow}>➕ Add New Piece</button>
-        <button className="pdf-btn" onClick={downloadPDF}>📄 Download Invoice PDF</button>
-      </div>
+          <div className="summary-box">
+            <label>Rate (₹ / Sq Ft)</label>
+            <input
+              className="rate-input"
+              placeholder="Enter rate"
+              value={rate}
+              onChange={(e) => setRate(e.target.value)}
+            />
 
-      <div className="summary">
-        <div className="summary-box">
-          <h2>Total Sq Ft</h2>
-          <p>{totalSqft.toFixed(2)}</p>
-        </div>
+            <p>Total Sq Ft: {totalSqft.toFixed(2)}</p>
+            <h2>Grand Total ₹ {grandTotal.toFixed(2)}</h2>
+          </div>
 
-        <div className="summary-box">
-          <h2>Rate (₹ / Sq Ft)</h2>
-          <input type="number" value={rate} onChange={(e) => setRate(e.target.value)} />
-        </div>
+          <button className="pdf-btn" onClick={downloadPDF}>Download PDF</button>
 
-        <div className="summary-box total-amount">
-          <h2>Grand Total</h2>
-          <p>₹ {grandTotal.toFixed(2)}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
+              </div>
+            );
+          }
 
 export default App;
-
-
-
-
-//old code v1
-// import jsPDF from "jspdf";
-// import autoTable from "jspdf-autotable";
-// import React, { useState } from "react";
-// import "./App.css";
-
-// function App() {
-//   const createRows = (count = 10) =>
-//     Array.from({ length: count }, () => ({
-//       lengthFt: "",
-//       lengthIn: "",
-//       breadthFt: "",
-//       breadthIn: "",
-//       sqft: 0
-//     }));
-
-//   const [stoneType, setStoneType] = useState("");
-// const [customStoneType, setCustomStoneType] = useState("");
-
-// const popularStones = [
-//   "Granite",
-//   "Granite - Pearl Black",
-//   "Granite - Z Black",
-//   "Granite - telephone Black",
-//   "Granite - Steal Black",
-//   "Kadapa Stone ",
-
-
-// ];
-
-
-
-//   const [rows, setRows] = useState(createRows());
-//   const [rate, setRate] = useState("");
-
-//   // ================= PDF =================
-// const downloadPDF = () => {
-//   const doc = new jsPDF();
-
-//   doc.setFontSize(18);
-//   doc.text("ANNA STONE - Granite Invoice", 14, 20);
-
-//   doc.setFontSize(12);
-//   doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 30);
-
-//   const finalStoneType = stoneType === "custom" ? customStoneType : stoneType;
-//   if (finalStoneType) {
-//     doc.text(`Stone Type: ${finalStoneType}`, 14, 38);
-//   } // ✅ close the if block here
-
-//   const tableColumn = ["Length", "Breadth", "Sq Ft"];
-//   const tableRows = [];
-
-//   rows.forEach((row) => {
-//     if (parseFloat(row.sqft) > 0) {
-//       tableRows.push([
-//         `${row.lengthFt}' ${row.lengthIn}"`,
-//         `${row.breadthFt}' ${row.breadthIn}"`,
-//         row.sqft
-//       ]);
-//     }
-//   });
-
-//   autoTable(doc, {
-//     startY: 46, // leave space for Stone Type
-//     head: [tableColumn],
-//     body: tableRows
-//   });
-
-//   const finalY = doc.lastAutoTable.finalY || 40;
-
-//   doc.text(`Total Sq Ft: ${totalSqft.toFixed(2)}`, 14, finalY + 10);
-//   doc.text(`Rate: Rs. ${rate}`, 14, finalY + 18);
-//   doc.text(`Grand Total: Rs. ${grandTotal.toFixed(2)}`, 14, finalY + 26);
-
-//   doc.save("Granite_Invoice.pdf");
-// };
-
-//   // ================= CALCULATION =================
-//   const handleChange = (index, field, value) => {
-//     const updatedRows = [...rows];
-//     updatedRows[index][field] = value;
-
-//     const lengthFt = parseFloat(updatedRows[index].lengthFt) || 0;
-//     const lengthIn = parseFloat(updatedRows[index].lengthIn) || 0;
-//     const breadthFt = parseFloat(updatedRows[index].breadthFt) || 0;
-//     const breadthIn = parseFloat(updatedRows[index].breadthIn) || 0;
-
-//     if (lengthFt || lengthIn || breadthFt || breadthIn) {
-//       const totalLengthInches = lengthFt * 12 + lengthIn + 1;
-//       const totalBreadthInches = breadthFt * 12 + breadthIn + 1;
-
-//       const sqft = (totalLengthInches * totalBreadthInches) / 144;
-//       updatedRows[index].sqft = sqft.toFixed(2);
-//     } else {
-//       updatedRows[index].sqft = 0;
-//     }
-
-//     setRows(updatedRows);
-//   };
-
-//   const addRow = () => {
-//     setRows([
-//       ...rows,
-//       {
-//         lengthFt: "",
-//         lengthIn: "",
-//         breadthFt: "",
-//         breadthIn: "",
-//         sqft: 0
-//       }
-//     ]);
-//   };
-
-//   const deleteRow = (index) => {
-//     const updatedRows = rows.filter((_, i) => i !== index);
-//     setRows(updatedRows);
-//   };
-
-//   const totalSqft = rows.reduce(
-//     (sum, row) => sum + parseFloat(row.sqft || 0),
-//     0
-//   );
-
-//   const grandTotal = totalSqft * (parseFloat(rate) || 0);
-
-//   // ================= UI =================
-//   return (
-//     <div className="container">
-//       <h1>ANNA STONE TRADING CALCULATOR</h1>
-
-//     <div className="top-row">
-//   <div className="stone-type-wrapper">
-//     <h2>Stone Type</h2>
-//     <select
-//       value={stoneType}
-//       onChange={(e) => setStoneType(e.target.value)}
-//     >
-//       <option value="">Select Stone</option>
-//       {popularStones.map((stone, i) => (
-//         <option key={i} value={stone}>{stone}</option>
-//       ))}
-//       <option value="custom">Custom</option>
-//     </select>
-
-//     {stoneType === "custom" && (
-//       <input
-//         type="text"
-//         placeholder="Enter stone name"
-//         value={customStoneType}
-//         onChange={(e) => setCustomStoneType(e.target.value)}
-//       />
-//     )}
-//   </div>
-// </div>
-
-
-//       <div className="table-wrapper">
-//         <table>
-//   <thead>
-//     <tr>
-//       <th colSpan="2">Length</th>
-//       <th rowSpan="2">×</th>
-//       <th colSpan="2">Breadth</th>
-//       <th rowSpan="2">Sq Ft</th>
-//       <th rowSpan="2">Action</th>
-//     </tr>
-//     <tr>
-//       <th>Ft</th>
-//       <th>In</th>
-//       <th>Ft</th>
-//       <th>In</th>
-//     </tr>
-//   </thead>
-//   <tbody>
-//     {rows.map((row, index) => (
-//       <tr key={index}>
-//         <td>
-//           <input
-//             type="number"
-//             value={row.lengthFt}
-//             onChange={(e) => handleChange(index, "lengthFt", e.target.value)}
-//           />
-//         </td>
-//         <td>
-//           <input
-//             type="number"
-//             value={row.lengthIn}
-//             onChange={(e) => handleChange(index, "lengthIn", e.target.value)}
-//           />
-//         </td>
-//         <td className="multiply">×</td>
-//         <td>
-//           <input
-//             type="number"
-//             value={row.breadthFt}
-//             onChange={(e) => handleChange(index, "breadthFt", e.target.value)}
-//           />
-//         </td>
-//         <td>
-//           <input
-//             type="number"
-//             value={row.breadthIn}
-//             onChange={(e) => handleChange(index, "breadthIn", e.target.value)}
-//           />
-//         </td>
-//         <td className="sqft-cell">{row.sqft}</td>
-//         <td>
-//           <button className="delete-btn" onClick={() => deleteRow(index)}>❌</button>
-//         </td>
-//       </tr>
-//     ))}
-//   </tbody>
-// </table>
-
-    
-//       </div>
-
-//       <div className="button-row">
-//         <button className="add-btn" onClick={addRow}>
-//           ➕ Add New Piece
-//         </button>
-
-//         <button className="pdf-btn" onClick={downloadPDF}>
-//           📄 Download Invoice PDF
-//         </button>
-//       </div>
-//       <div className="summary-box">
-
-//   {/* <h2>Stone Type</h2>
-//   <select
-//     value={stoneType}
-//     onChange={(e) => setStoneType(e.target.value)}
-//   >
-//     <option value="">Select Stone</option>
-//     {popularStones.map((stone, i) => (
-//       <option key={i} value={stone}>{stone}</option>
-//     ))}
-//     <option value="custom">Custom</option>
-//   </select> */}
-// {/* 
-//   {stoneType === "custom" && (
-//     <input
-//       type="text"
-//       placeholder="Enter stone name"
-//       value={customStoneType}
-//       onChange={(e) => setCustomStoneType(e.target.value)}
-//       style={{ marginTop: "5px", width: "100%" }}
-//     />
-//   )} */}
-
-
-
-
-
-// </div>
-
-
-//       <div className="summary">
-//         <div className="summary-box">
-//           <h2>Total Sq Ft</h2>
-//           <p>{totalSqft.toFixed(2)}</p>
-//         </div>
-
-//         <div className="summary-box">
-//           <h2>Rate (₹ / Sq Ft)</h2>
-//           <input
-//             type="number"
-//             value={rate}
-//             onChange={(e) => setRate(e.target.value)}
-//           />
-//         </div>
-
-//         <div className="summary-box total-amount">
-//           <h2>Grand Total</h2>
-//           <p>₹ {grandTotal.toFixed(2)}</p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default App;
