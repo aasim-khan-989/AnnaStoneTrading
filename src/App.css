@@ -69,3 +69,44 @@ input:focus {
   display: block;
   font-weight: 500;
 }
+
+
+/* TABLE DESIGN */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th {
+  background: #2c3e50;
+  color: white;
+  padding: 8px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+td {
+  padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+tr:hover td {
+  background: #f7f9fc;
+}
+
+/* make first header row darker */
+thead tr:first-child th {
+  background: #1f2d3a;
+  font-size: 13px;
+}
+
+/* mobile adjustment */
+@media (max-width: 480px) {
+  th, td {
+    font-size: 12px;
+    padding: 6px;
+  }
+}

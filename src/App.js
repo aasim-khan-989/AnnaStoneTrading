@@ -158,6 +158,21 @@ function App() {
       {/* TABLE */}
       <div className="table-wrapper">
         <table>
+          <thead>
+      <tr>
+        <th colSpan="2">Length</th>
+        <th rowSpan="2">×</th>
+        <th colSpan="2">Breadth</th>
+        <th rowSpan="2">Sq Ft</th>
+        <th rowSpan="2">Action</th>
+      </tr>
+      <tr>
+        <th>Ft</th>
+        <th>In</th>
+        <th>Ft</th>
+        <th>In</th>
+      </tr>
+    </thead>
           <tbody>
             {rows.map((row, i) => (
               <tr key={i}>
