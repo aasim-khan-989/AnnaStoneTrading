@@ -46,7 +46,7 @@ function App() {
   };
 
   const autoJump = (value, refIndex) => {
-    if (value === " " || value.length >= 2) {
+    if (value === " " || value.length >= 3) {
       focusNext(refIndex);
     }
   };
@@ -188,7 +188,7 @@ function App() {
               <th colSpan="2">Breadth</th>
               <th rowSpan="2">Qty</th>
               <th rowSpan="2">Sq Ft</th>
-              <th rowSpan="2">Action</th>
+              <th rowSpan="2">Delete</th>
             </tr>
             <tr>
               <th>Ft</th>
@@ -199,86 +199,115 @@ function App() {
           </thead>
 
           <tbody>
-            {rows.map((row, i) => (
-              <tr key={i}>
-                <td>
-                  <input
-                    ref={(el) => (inputRefs.current[i * 4] = el)}
-                    className="calc-input"
-                    value={row.lengthFt}
-                    onChange={(e) => {
-                      handleChange(i, "lengthFt", e.target.value);
-                      autoJump(e.target.value, i * 4);
-                    }}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && focusNext(i * 4)
-                    }
-                  />
-                </td>
+  {rows.map((row, i) => (
+    <tr key={i}>
+      {/* LENGTH FT */}
+      <td>
+        <input
+          ref={(el) => (inputRefs.current[i * 5] = el)}
+          className="calc-input"
+          value={row.lengthFt}
+          onChange={(e) => {
+            handleChange(i, "lengthFt", e.target.value);
+            autoJump(e.target.value, i * 5);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === " " || e.key === "Enter") {
+              e.preventDefault();
+              focusNext(i * 5);
+            }
+          }}
+        />
+      </td>
 
-                <td>
-                  <input
-                    ref={(el) => (inputRefs.current[i * 4 + 1] = el)}
-                    className="calc-input"
-                    value={row.lengthIn}
-                    onChange={(e) => {
-                      handleChange(i, "lengthIn", e.target.value);
-                      autoJump(e.target.value, i * 4 + 1);
-                    }}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && focusNext(i * 4 + 1)
-                    }
-                  />
-                </td>
+      {/* LENGTH IN */}
+      <td>
+        <input
+          ref={(el) => (inputRefs.current[i * 5 + 1] = el)}
+          className="calc-input"
+          value={row.lengthIn}
+          onChange={(e) => {
+            handleChange(i, "lengthIn", e.target.value);
+            autoJump(e.target.value, i * 5 + 1);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === " " || e.key === "Enter") {
+              e.preventDefault();
+              focusNext(i * 5 + 1);
+            }
+          }}
+        />
+      </td>
 
-                <td>×</td>
+      <td>×</td>
 
-                <td>
-                  <input
-                    ref={(el) => (inputRefs.current[i * 4 + 2] = el)}
-                    className="calc-input"
-                    value={row.breadthFt}
-                    onChange={(e) => {
-                      handleChange(i, "breadthFt", e.target.value);
-                      autoJump(e.target.value, i * 4 + 2);
-                    }}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && focusNext(i * 4 + 2)
-                    }
-                  />
-                </td>
+      {/* BREADTH FT */}
+      <td>
+        <input
+          ref={(el) => (inputRefs.current[i * 5 + 2] = el)}
+          className="calc-input"
+          value={row.breadthFt}
+          onChange={(e) => {
+            handleChange(i, "breadthFt", e.target.value);
+            autoJump(e.target.value, i * 5 + 2);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === " " || e.key === "Enter") {
+              e.preventDefault();
+              focusNext(i * 5 + 2);
+            }
+          }}
+        />
+      </td>
 
-                <td>
-                  <input
-                    ref={(el) => (inputRefs.current[i * 4 + 3] = el)}
-                    className="calc-input"
-                    value={row.breadthIn}
-                    onChange={(e) => {
-                      handleChange(i, "breadthIn", e.target.value);
-                      autoJump(e.target.value, i * 4 + 3);
-                    }}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && focusNext(i * 4 + 3)
-                    }
-                  />
-                </td>
-                <td>
-                  <input
-                    className="calc-input"
-                    type="number"
-                    min="1"
-                    value={row.qty}
-                    onChange={(e) => handleChange(i, "qty", e.target.value)}
-                  />
-                </td>
+      {/* BREADTH IN */}
+      <td>
+        <input
+          ref={(el) => (inputRefs.current[i * 5 + 3] = el)}
+          className="calc-input"
+          value={row.breadthIn}
+          onChange={(e) => {
+            handleChange(i, "breadthIn", e.target.value);
+            autoJump(e.target.value, i * 5 + 3);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === " " || e.key === "Enter") {
+              e.preventDefault();
+              focusNext(i * 5 + 3);
+            }
+          }}
+        />
+      </td>
 
-                <td>{row.sqft}</td>
-                <td>
-                  <button onClick={() => deleteRow(i)}>❌</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+      {/* QTY */}
+      <td>
+        <input
+          ref={(el) => (inputRefs.current[i * 5 + 4] = el)}
+          className="calc-input"
+          type="number"
+          min="1"
+          value={row.qty}
+          onChange={(e) => handleChange(i, "qty", e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === " " || e.key === "Enter") {
+              e.preventDefault();
+              focusNext(i * 5 + 4);
+            }
+          }}
+        />
+      </td>
+
+      {/* SQFT */}
+      <td>{row.sqft}</td>
+
+      {/* DELETE */}
+      <td>
+        <button onClick={() => deleteRow(i)}>❌</button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </table>
       </div>
 
