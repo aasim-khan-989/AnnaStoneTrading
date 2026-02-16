@@ -12,6 +12,7 @@ function App() {
       lengthIn: "",
       breadthFt: "",
       breadthIn: "",
+      qty: 1,
       sqft: 0
     }));
 
@@ -67,15 +68,17 @@ function App() {
     if (finalStoneType)
       doc.text(`Stone Type: ${finalStoneType}`, 14, 46);
 
-    const tableColumn = ["Length", "Breadth", "Sq Ft"];
+    const tableColumn = ["Length", "Breadth", "Qty", "Sq Ft"];
+
     const tableRows = [];
 
     rows.forEach((row) => {
       if (parseFloat(row.sqft) > 0) {
         tableRows.push([
-          `${row.lengthFt}' ${row.lengthIn}"`,
-          `${row.breadthFt}' ${row.breadthIn}"`,
-          row.sqft
+                `${row.lengthFt}' ${row.lengthIn}"`,
+        `${row.breadthFt}' ${row.breadthIn}"`,
+        row.qty,
+        row.sqft
         ]);
       }
     });
@@ -100,11 +103,13 @@ function App() {
     const lin = parseFloat(updatedRows[index].lengthIn) || 0;
     const bft = parseFloat(updatedRows[index].breadthFt) || 0;
     const bin = parseFloat(updatedRows[index].breadthIn) || 0;
+    const qty = parseFloat(updatedRows[index].qty) || 1;
+
 
     if (lft || lin || bft || bin) {
       const L = lft * 12 + lin + 1;
       const B = bft * 12 + bin + 1;
-      updatedRows[index].sqft = ((L * B) / 144).toFixed(2);
+      updatedRows[index].sqft = (((L * B) / 144) * qty).toFixed(2);
     } else updatedRows[index].sqft = 0;
 
     setRows(updatedRows);
@@ -113,7 +118,8 @@ function App() {
   const addRow = () =>
     setRows([
       ...rows,
-      { lengthFt: "", lengthIn: "", breadthFt: "", breadthIn: "", sqft: 0 }
+      { lengthFt: "", lengthIn: "", breadthFt: "", breadthIn: "", qty: 1, sqft: 0 }
+
     ]);
 
   const deleteRow = (i) => setRows(rows.filter((_, idx) => idx !== i));
@@ -180,6 +186,7 @@ function App() {
               <th colSpan="2">Length</th>
               <th rowSpan="2">×</th>
               <th colSpan="2">Breadth</th>
+              <th rowSpan="2">Qty</th>
               <th rowSpan="2">Sq Ft</th>
               <th rowSpan="2">Action</th>
             </tr>
@@ -253,6 +260,15 @@ function App() {
                     onKeyDown={(e) =>
                       e.key === "Enter" && focusNext(i * 4 + 3)
                     }
+                  />
+                </td>
+                <td>
+                  <input
+                    className="calc-input"
+                    type="number"
+                    min="1"
+                    value={row.qty}
+                    onChange={(e) => handleChange(i, "qty", e.target.value)}
                   />
                 </td>
 
