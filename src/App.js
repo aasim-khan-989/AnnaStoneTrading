@@ -4,6 +4,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import React, { useState, useRef } from "react";
 import "./App.css";
+import GraniteCalculator from "./components/GraniteCalculator";
 
 function App() {
   const createRows = (count = 10) =>
@@ -16,6 +17,8 @@ function App() {
       sqft: 0
     }));
 
+
+  const [calculatorType, setCalculatorType] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [invoiceDate, setInvoiceDate] = useState(
     new Date().toISOString().split("T")[0]
@@ -75,10 +78,10 @@ function App() {
     rows.forEach((row) => {
       if (parseFloat(row.sqft) > 0) {
         tableRows.push([
-                `${row.lengthFt}' ${row.lengthIn}"`,
-        `${row.breadthFt}' ${row.breadthIn}"`,
-        row.qty,
-        row.sqft
+          `${row.lengthFt}' ${row.lengthIn}"`,
+          `${row.breadthFt}' ${row.breadthIn}"`,
+          row.qty,
+          row.sqft
         ]);
       }
     });
@@ -129,7 +132,24 @@ function App() {
 
   return (
     <div className="container">
-      <h1>ANNA STONE CALCULATOR</h1>
+
+    
+<div className="app-header">
+
+<h1 className="app-title">
+
+🪨 ANNA STONE
+
+</h1>
+
+<p className="app-subtitle">
+
+Smart Stone Area Calculator • Fast Billing • Accurate Measurement
+
+</p>
+
+</div>
+
 
       {/* HEADER */}
       <div className="client-wrapper">
@@ -178,153 +198,83 @@ function App() {
         )}
       </div>
 
+      {/* CALCULATOR SELECTOR */}
+
+      <div className="calculator-selector">
+
+        <h3>Select Calculator</h3>
+
+        <div className="calculator-grid">
+
+          <div
+            className={`calculator-card ${calculatorType === "granite" ? "active" : ""}`}
+            onClick={() => setCalculatorType("granite")}
+          >
+
+            🪨
+            <h4>Granite</h4>
+            <p>Stone Pieces Calculator</p>
+
+          </div>
+
+
+          <div
+            className={`calculator-card ${calculatorType === "kadappa" ? "active" : ""}`}
+            onClick={() => setCalculatorType("kadappa")}
+          >
+
+            🧱
+            <h4>Kadappa</h4>
+            <p>Coming Soon</p>
+
+          </div>
+
+
+          <div
+            className={`calculator-card ${calculatorType === "tiles" ? "active" : ""}`}
+            onClick={() => setCalculatorType("tiles")}
+          >
+
+            ⬜
+            <h4>Tiles</h4>
+            <p>Area Tiles Calculator</p>
+
+          </div>
+
+        </div>
+
+      </div>
+
       {/* TABLE */}
-      <div className="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th colSpan="2">Length</th>
-              <th rowSpan="2">×</th>
-              <th colSpan="2">Breadth</th>
-              <th rowSpan="2">Qty</th>
-              <th rowSpan="2">Sq Ft</th>
-              <th rowSpan="2">Delete</th>
-            </tr>
-            <tr>
-              <th>Ft</th>
-              <th>In</th>
-              <th>Ft</th>
-              <th>In</th>
-            </tr>
-          </thead>
 
-          <tbody>
-  {rows.map((row, i) => (
-    <tr key={i}>
-      {/* LENGTH FT */}
-      <td>
-        <input
-          ref={(el) => (inputRefs.current[i * 5] = el)}
-          className="calc-input"
-          value={row.lengthFt}
-          onChange={(e) => {
-            handleChange(i, "lengthFt", e.target.value);
-            autoJump(e.target.value, i * 5);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === " " || e.key === "Enter") {
-              e.preventDefault();
-              focusNext(i * 5);
-            }
-          }}
+      {calculatorType === "granite" && (
+
+        <GraniteCalculator
+
+          rows={rows}
+          handleChange={handleChange}
+          inputRefs={inputRefs}
+          autoJump={autoJump}
+          focusNext={focusNext}
+          deleteRow={deleteRow}
+          addRow={addRow}
+          rate={rate}
+          setRate={setRate}
+          totalSqft={totalSqft}
+          grandTotal={grandTotal}
+          downloadPDF={downloadPDF}
+
         />
-      </td>
 
-      {/* LENGTH IN */}
-      <td>
-        <input
-          ref={(el) => (inputRefs.current[i * 5 + 1] = el)}
-          className="calc-input"
-          value={row.lengthIn}
-          onChange={(e) => {
-            handleChange(i, "lengthIn", e.target.value);
-            autoJump(e.target.value, i * 5 + 1);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === " " || e.key === "Enter") {
-              e.preventDefault();
-              focusNext(i * 5 + 1);
-            }
-          }}
-        />
-      </td>
+      )}
 
-      <td>×</td>
 
-      {/* BREADTH FT */}
-      <td>
-        <input
-          ref={(el) => (inputRefs.current[i * 5 + 2] = el)}
-          className="calc-input"
-          value={row.breadthFt}
-          onChange={(e) => {
-            handleChange(i, "breadthFt", e.target.value);
-            autoJump(e.target.value, i * 5 + 2);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === " " || e.key === "Enter") {
-              e.preventDefault();
-              focusNext(i * 5 + 2);
-            }
-          }}
-        />
-      </td>
 
-      {/* BREADTH IN */}
-      <td>
-        <input
-          ref={(el) => (inputRefs.current[i * 5 + 3] = el)}
-          className="calc-input"
-          value={row.breadthIn}
-          onChange={(e) => {
-            handleChange(i, "breadthIn", e.target.value);
-            autoJump(e.target.value, i * 5 + 3);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === " " || e.key === "Enter") {
-              e.preventDefault();
-              focusNext(i * 5 + 3);
-            }
-          }}
-        />
-      </td>
 
-      {/* QTY */}
-      <td>
-        <input
-          ref={(el) => (inputRefs.current[i * 5 + 4] = el)}
-          className="calc-input"
-          type="number"
-          min="1"
-          value={row.qty}
-          onChange={(e) => handleChange(i, "qty", e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === " " || e.key === "Enter") {
-              e.preventDefault();
-              focusNext(i * 5 + 4);
-            }
-          }}
-        />
-      </td>
 
-      {/* SQFT */}
-      <td>{row.sqft}</td>
 
-      {/* DELETE */}
-      <td>
-        <button onClick={() => deleteRow(i)}>❌</button>
-      </td>
-    </tr>
-  ))}
-</tbody>
 
-        </table>
-      </div>
 
-      <button className="add-btn" onClick={addRow}>Add Piece</button>
-
-      <div className="summary-box">
-        <label>Rate (₹ / Sq Ft)</label>
-        <input
-          className="rate-input"
-          value={rate}
-          onChange={(e) => setRate(e.target.value)}
-        />
-        <p>Total Sq Ft: {totalSqft.toFixed(2)}</p>
-        <h2>Grand Total ₹ {grandTotal.toFixed(2)}</h2>
-      </div>
-
-      <button className="pdf-btn" onClick={downloadPDF}>Download PDF</button>
     </div>
   );
 }

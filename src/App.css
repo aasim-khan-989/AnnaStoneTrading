@@ -1,112 +1,690 @@
+/* =============================
+   GLOBAL RESET + BASE
+============================= */
 
-body { background:#f4f6f9; font-family:Segoe UI; }
+/* =============================
+   APP HEADER (BRANDING)
+============================= */
 
-.container { max-width:600px; margin:auto; padding:15px; }
+/* =============================
+   ULTRA PREMIUM HEADER
+============================= */
 
-.full-input {
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  margin-top:5px;
-}
+.app-header{
 
-.calc-input {
-  width:50px;
-  padding:6px;
-  text-align:center;
-  border-radius:6px;
-  border:1px solid #ccc;
-}
+position:relative;
 
-input:focus {
-  border-color:#27ae60;
-  box-shadow:0 0 0 2px rgba(39,174,96,0.2);
-}
+overflow:hidden;
 
-.client-wrapper { display:flex; gap:10px; flex-direction:column; }
+background:linear-gradient(
+135deg,
+rgba(30, 53, 229, 0.85),
+rgba(158, 21, 192, 0.85)
+);
 
-.stone-type-wrapper,
-.client-field {
-  background:white;
-  padding:12px;
-  border-radius:10px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.06);
-  margin-bottom:10px;
-}
+backdrop-filter: blur(12px);
 
-.table-wrapper { overflow-x:auto; background:white; padding:10px; border-radius:10px; }
+-webkit-backdrop-filter: blur(12px);
 
-.add-btn,.pdf-btn {
-  margin-top:10px;
-  padding:10px;
-  border:none;
-  border-radius:8px;
-  color:white;
-  width:100%;
-}
+border-radius:16px;
 
-.add-btn { background:#27ae60; }
-.pdf-btn { background:#2c3e50; }
+padding:22px;
 
+margin-bottom:18px;
 
-.summary-box {
-  background: white;
-  padding: 12px;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
-  margin-top: 10px;
-  text-align: center;
-}
+text-align:center;
 
-.rate-input {
-  width: 120px;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  text-align: center;
-  margin: 8px auto;
-  display: block;
-  font-weight: 500;
+color:white;
+
+/* Glass Border */
+
+border:1px solid rgba(255,255,255,.25);
+
+/* Soft Shadow */
+
+box-shadow:
+
+0 10px 30px rgba(0,0,0,.18);
+
+transition:.35s;
+
 }
 
 
-/* TABLE DESIGN */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
+/* Slight Lift Hover */
+
+.app-header:hover{
+
+transform:translateY(-2px);
+
+box-shadow:
+
+0 15px 35px rgba(0,0,0,.22);
+
 }
 
-th {
-  background: #2c3e50;
-  color: white;
-  padding: 8px;
-  font-weight: 600;
-  text-align: center;
-  letter-spacing: 0.3px;
+
+
+/* =============================
+   SHINE EFFECT
+============================= */
+
+.app-header::before{
+
+content:"";
+
+position:absolute;
+
+top:-50%;
+
+left:-70%;
+
+width:60%;
+
+height:200%;
+
+background:linear-gradient(
+
+120deg,
+
+transparent,
+
+rgba(255,255,255,.35),
+
+transparent
+
+);
+
+transform:rotate(25deg);
+
+animation:shineMove 6s infinite linear;
+
 }
 
-td {
-  padding: 8px;
-  text-align: center;
-  border-bottom: 1px solid #eee;
+
+/* Shine Animation */
+
+@keyframes shineMove{
+
+0%{
+
+left:-80%;
+
 }
 
-tr:hover td {
-  background: #f7f9fc;
+100%{
+
+left:150%;
+
 }
 
-/* make first header row darker */
-thead tr:first-child th {
-  background: #1f2d3a;
-  font-size: 13px;
 }
 
-/* mobile adjustment */
-@media (max-width: 480px) {
-  th, td {
-    font-size: 12px;
-    padding: 6px;
-  }
+
+
+/* =============================
+   FLOATING LIGHT ORBS
+============================= */
+
+.app-header::after{
+
+content:"";
+
+position:absolute;
+
+inset:0;
+
+background:
+
+radial-gradient(
+
+circle at 20% 20%,
+
+rgba(255,255,255,.25),
+
+transparent 40%
+
+),
+
+radial-gradient(
+
+circle at 80% 70%,
+
+rgba(255,255,255,.18),
+
+transparent 45%
+
+);
+
+pointer-events:none;
+
+}
+
+
+
+/* =============================
+   TITLE
+============================= */
+
+.app-title{
+
+margin:0;
+
+font-size:28px;
+
+font-weight:800;
+
+letter-spacing:1.2px;
+
+text-shadow:
+
+0 2px 6px rgba(0,0,0,.2);
+
+animation:titleFloat 3s ease-in-out infinite;
+
+}
+
+
+
+/* Floating Animation */
+
+@keyframes titleFloat{
+
+0%,100%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-3px);
+
+}
+
+}
+
+
+
+/* =============================
+   SUB TITLE
+============================= */
+
+.app-subtitle{
+
+margin-top:6px;
+
+font-size:13px;
+
+opacity:.95;
+
+letter-spacing:.6px;
+
+}
+
+/* MAIN TITLE */
+
+.app-title{
+
+margin:0;
+
+font-size:26px;
+
+font-weight:700;
+
+letter-spacing:1px;
+
+}
+
+
+/* SUB TITLE */
+
+.app-subtitle{
+
+margin-top:5px;
+
+font-size:13px;
+
+opacity:.9;
+
+letter-spacing:.5px;
+
+}
+
+body {
+
+background:#f5f4f9;
+
+font-family:"Segoe UI",system-ui,sans-serif;
+
+margin:0;
+
+}
+
+
+/* =============================
+   LAYOUT
+============================= */
+
+.container{
+
+max-width:600px;
+
+margin:auto;
+
+padding:15px;
+
+}
+
+
+/* =============================
+   CARD SYSTEM (Reusable)
+============================= */
+
+.card{
+
+background:white;
+
+padding:12px;
+
+border-radius:10px;
+
+box-shadow:0 3px 10px rgba(0,0,0,0.06);
+
+margin-bottom:10px;
+
+}
+
+
+/* =============================
+   FORM INPUTS
+============================= */
+
+.full-input{
+
+width:100%;
+
+padding:10px;
+
+border-radius:8px;
+
+border:1px solid #ccc;
+
+margin-top:5px;
+
+font-size:14px;
+
+}
+
+
+.calc-input{
+
+width:55px;
+
+padding:6px;
+
+text-align:center;
+
+border-radius:6px;
+
+border:1px solid #ccc;
+
+}
+
+
+/* Focus */
+
+input:focus{
+
+outline:none;
+
+border-color:#27ae60;
+
+box-shadow:0 0 0 2px rgba(39,174,96,0.2);
+
+}
+
+
+/* =============================
+   HEADER SECTION
+============================= */
+
+.client-wrapper{
+
+display:flex;
+
+flex-direction:column;
+
+gap:10px;
+
+}
+
+.client-field{
+
+}
+
+.stone-type-wrapper{
+
+}
+
+
+/* Apply card look */
+
+.client-field,
+.stone-type-wrapper{
+
+background:white;
+
+padding:12px;
+
+border-radius:10px;
+
+box-shadow:0 3px 10px rgba(0,0,0,0.06);
+
+margin-bottom:10px;
+
+}
+
+
+/* =============================
+   BUTTONS
+============================= */
+
+.add-btn,
+.pdf-btn{
+
+margin-top:10px;
+
+padding:10px;
+
+border:none;
+
+border-radius:8px;
+
+color:white;
+
+width:100%;
+
+cursor:pointer;
+
+font-weight:600;
+
+transition:.2s;
+
+}
+
+
+.add-btn{
+
+background:#27ae60;
+
+}
+
+
+.pdf-btn{
+
+background:#2c3e50;
+
+}
+
+
+/* Hover */
+
+.add-btn:hover{
+
+background:#219150;
+
+}
+
+.pdf-btn:hover{
+
+background:#1f2d3a;
+
+}
+
+
+
+/* =============================
+   TABLE DESIGN
+============================= */
+
+.table-wrapper{
+
+overflow-x:auto;
+
+background:white;
+
+padding:10px;
+
+border-radius:10px;
+
+}
+
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+font-size:14px;
+
+}
+
+
+/* Header */
+
+thead tr:first-child th{
+
+background:#1f2d3a;
+
+font-size:13px;
+
+color:white;
+
+}
+
+
+th{
+
+background:#2c3e50;
+
+color:white;
+
+padding:8px;
+
+font-weight:600;
+
+text-align:center;
+
+letter-spacing:.3px;
+
+}
+
+
+/* Body */
+
+td{
+
+padding:8px;
+
+text-align:center;
+
+border-bottom:1px solid #eee;
+
+}
+
+
+tr:hover td{
+
+background:#f7f9fc;
+
+}
+
+
+
+/* =============================
+   SUMMARY BOX
+============================= */
+
+.summary-box{
+
+background:white;
+
+padding:12px;
+
+border-radius:10px;
+
+box-shadow:0 3px 10px rgba(0,0,0,0.06);
+
+margin-top:10px;
+
+text-align:center;
+
+}
+
+
+.rate-input{
+
+width:120px;
+
+padding:8px;
+
+border-radius:6px;
+
+border:1px solid #ccc;
+
+text-align:center;
+
+margin:8px auto;
+
+display:block;
+
+font-weight:500;
+
+}
+
+
+
+/* =============================
+   CALCULATOR SELECTOR
+============================= */
+
+.calculator-selector{
+
+margin-top:20px;
+
+}
+
+
+.calculator-selector h3{
+
+margin-bottom:10px;
+
+font-weight:600;
+
+}
+
+
+/* GRID */
+
+.calculator-grid{
+
+display:grid;
+
+grid-template-columns:
+
+repeat(auto-fit,minmax(170px,1fr));
+
+gap:15px;
+
+}
+
+
+/* CARD */
+
+.calculator-card{
+
+background:white;
+
+border-radius:12px;
+
+padding:20px;
+
+cursor:pointer;
+
+text-align:center;
+
+box-shadow:0 4px 10px rgba(0,0,0,0.08);
+
+transition:.25s;
+
+user-select:none;
+
+}
+
+
+/* Hover */
+
+.calculator-card:hover{
+
+transform:translateY(-4px);
+
+box-shadow:0 8px 20px rgba(0,0,0,0.15);
+
+}
+
+
+/* Active */
+
+.calculator-card.active{
+
+background:#1e88e5;
+
+color:white;
+
+transform:scale(1.03);
+
+}
+
+
+.calculator-card h4{
+
+margin:8px 0 5px;
+
+}
+
+
+.calculator-card p{
+
+font-size:13px;
+
+opacity:.8;
+
+}
+
+
+
+/* =============================
+   MOBILE OPTIMIZATION
+============================= */
+
+@media(max-width:480px){
+
+th,
+td{
+
+font-size:12px;
+
+padding:6px;
+
+}
+
+
+.calc-input{
+
+width:45px;
+
+}
+
 }
