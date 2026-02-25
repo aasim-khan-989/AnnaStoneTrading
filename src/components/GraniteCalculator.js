@@ -510,9 +510,28 @@ Add Piece
 
 <div className="summary-box">
 
+{/* TOP ROW */}
+
+<div className="summary-top">
+
+<div className="total-sqft">
+
+<span>Total Sq Ft</span>
+
+<h2>
+
+{totalSqft.toFixed(2)}
+
+</h2>
+
+</div>
+
+
+<div className="rate-box">
+
 <label>
 
-Rate (₹ / Sq Ft)
+Rate ₹ / Sq Ft
 
 </label>
 
@@ -524,26 +543,32 @@ value={rate}
 
 onChange={(e)=>setRate(e.target.value)}
 
+inputMode="numeric"
+
 />
-
-<p>
-
-Total Sq Ft :
-
-{totalSqft.toFixed(2)}
-
-</p>
-
-<h2>
-
-Grand Total ₹
-
-{grandTotal.toFixed(2)}
-
-</h2>
 
 </div>
 
+</div>
+
+
+
+{/* GRAND TOTAL */}
+
+<div className="grand-total">
+
+Grand Total ₹
+
+<span>
+
+{grandTotal.toFixed(2)}
+
+</span>
+
+</div>
+
+
+</div>
 
 
 <button

@@ -492,7 +492,6 @@ alert("Sharing supported only on Mobile Chrome.");
 
 
 
-
     </div>
   );
 }
