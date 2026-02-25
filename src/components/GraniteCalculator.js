@@ -1,14 +1,10 @@
-
-
-import React,{useState} from "react";
+import React, { useState } from "react";
 
 export default function GraniteCalculator({
 
 rows,
 handleChange,
 inputRefs,
-autoJump,
-focusNext,
 deleteRow,
 addRow,
 rate,
@@ -17,14 +13,122 @@ totalSqft,
 grandTotal,
 downloadPDF
 
-}){
+}) {
 
 
-/* ===== SEPARATE FT TOGGLES ===== */
+/* ===== FT TOGGLES ===== */
 
 const [showLengthFt,setShowLengthFt]=useState(false);
-
 const [showBreadthFt,setShowBreadthFt]=useState(false);
+
+
+/* ========= SMART FLOW NAVIGATION ========= */
+
+const moveFocus = (index) => {
+
+if(inputRefs.current[index]){
+
+inputRefs.current[index].focus();
+
+}
+
+};
+
+
+
+/* ===== LENGTH FT ===== */
+
+const lengthFtKey = (e,i)=>{
+
+if(e.key===" " || e.key==="Enter"){
+
+e.preventDefault();
+
+/* LENGTH FT → LENGTH IN */
+
+moveFocus(i*5 + 1);
+
+}
+
+};
+
+
+
+/* ===== LENGTH IN ===== */
+
+const lengthInKey = (e,i)=>{
+
+if(e.key===" " || e.key==="Enter"){
+
+e.preventDefault();
+
+/* LENGTH IN → BREADTH IN (SKIP FT) */
+
+moveFocus(i*5 + 3);
+
+}
+
+};
+
+
+
+/* ===== BREADTH FT ===== */
+
+const breadthFtKey=(e,i)=>{
+
+if(e.key===" " || e.key==="Enter"){
+
+e.preventDefault();
+
+/* BREADTH FT → BREADTH IN */
+
+moveFocus(i*5 + 3);
+
+}
+
+};
+
+
+
+/* ===== BREADTH IN ===== */
+
+const breadthInKey=(e,i)=>{
+
+if(e.key===" " || e.key==="Enter"){
+
+e.preventDefault();
+
+/* BREADTH IN → QTY */
+
+moveFocus(i*5 + 4);
+
+}
+
+};
+
+
+
+/* ===== QTY ===== */
+
+const qtyKey=(e,i)=>{
+
+if(e.key===" " || e.key==="Enter"){
+
+e.preventDefault();
+
+/* NEXT ROW LENGTH IN */
+
+const next=(i+1)*5 + 1;
+
+if(inputRefs.current[next]){
+
+inputRefs.current[next].focus();
+
+}
+
+}
+
+};
 
 
 
@@ -38,9 +142,6 @@ return(
 
 <thead>
 
-
-{/* HEADER ROW 1 */}
-
 <tr>
 
 <th colSpan={showLengthFt?2:1}>
@@ -49,7 +150,7 @@ Length
 
 </th>
 
-<th>
+<th className="multiply-header">
 
 ×
 
@@ -73,21 +174,15 @@ SqFt
 
 </th>
 
-<th>
-
-Delete
-
-</th>
+<th className="delete-col"></th>
 
 </tr>
 
 
 
-{/* HEADER ROW 2 */}
+{/* SHOW FT */}
 
 <tr>
-
-{/* LENGTH TOGGLE */}
 
 <th
 
@@ -99,15 +194,11 @@ onClick={()=>setShowLengthFt(v=>!v)}
 
 >
 
-{showLengthFt ? "Hide Ft" : "Show Ft"}
+{showLengthFt?"Hide Ft":"Show Ft"}
 
 </th>
 
-
 <th></th>
-
-
-{/* BREADTH TOGGLE */}
 
 <th
 
@@ -119,10 +210,9 @@ onClick={()=>setShowBreadthFt(v=>!v)}
 
 >
 
-{showBreadthFt ? "Hide Ft" : "Show Ft"}
+{showBreadthFt?"Hide Ft":"Show Ft"}
 
 </th>
-
 
 <th></th>
 
@@ -134,7 +224,7 @@ onClick={()=>setShowBreadthFt(v=>!v)}
 
 
 
-{/* HEADER ROW 3 */}
+{/* LABELS */}
 
 <tr>
 
@@ -152,7 +242,7 @@ onClick={()=>setShowBreadthFt(v=>!v)}
 
 <th>SqFt</th>
 
-<th>❌</th>
+<th></th>
 
 </tr>
 
@@ -175,7 +265,7 @@ onClick={()=>setShowBreadthFt(v=>!v)}
 
 <input
 
-ref={(el)=>(inputRefs.current[i*5]=el)}
+ref={el=>inputRefs.current[i*5]=el}
 
 className="calc-input large-input"
 
@@ -183,27 +273,23 @@ value={row.lengthFt}
 
 inputMode="numeric"
 
-onChange={(e)=>{
+onChange={(e)=>
 
-handleChange(i,"lengthFt",e.target.value);
+handleChange(
 
-autoJump(e.target.value,i*5);
+i,
 
-}}
+"lengthFt",
 
-onKeyDown={(e)=>{
+e.target.value
 
-if(e.key===" "||e.key==="Enter"){
-
-e.preventDefault();
-
-focusNext(i*5);
+)
 
 }
 
-}}
+onKeyDown={(e)=>lengthFtKey(e,i)}
 
- />
+/>
 
 </td>
 
@@ -217,7 +303,7 @@ focusNext(i*5);
 
 <input
 
-ref={(el)=>(inputRefs.current[i*5+1]=el)}
+ref={el=>inputRefs.current[i*5+1]=el}
 
 className="calc-input large-input"
 
@@ -225,15 +311,23 @@ value={row.lengthIn}
 
 inputMode="numeric"
 
-onChange={(e)=>{
+onChange={(e)=>
 
-handleChange(i,"lengthIn",e.target.value);
+handleChange(
 
-autoJump(e.target.value,i*5+1);
+i,
 
-}}
+"lengthIn",
 
- />
+e.target.value
+
+)
+
+}
+
+onKeyDown={(e)=>lengthInKey(e,i)}
+
+/>
 
 </td>
 
@@ -255,7 +349,7 @@ autoJump(e.target.value,i*5+1);
 
 <input
 
-ref={(el)=>(inputRefs.current[i*5+2]=el)}
+ref={el=>inputRefs.current[i*5+2]=el}
 
 className="calc-input large-input"
 
@@ -263,15 +357,23 @@ value={row.breadthFt}
 
 inputMode="numeric"
 
-onChange={(e)=>{
+onChange={(e)=>
 
-handleChange(i,"breadthFt",e.target.value);
+handleChange(
 
-autoJump(e.target.value,i*5+2);
+i,
 
-}}
+"breadthFt",
 
- />
+e.target.value
+
+)
+
+}
+
+onKeyDown={(e)=>breadthFtKey(e,i)}
+
+/>
 
 </td>
 
@@ -285,7 +387,7 @@ autoJump(e.target.value,i*5+2);
 
 <input
 
-ref={(el)=>(inputRefs.current[i*5+3]=el)}
+ref={el=>inputRefs.current[i*5+3]=el}
 
 className="calc-input large-input"
 
@@ -293,15 +395,23 @@ value={row.breadthIn}
 
 inputMode="numeric"
 
-onChange={(e)=>{
+onChange={(e)=>
 
-handleChange(i,"breadthIn",e.target.value);
+handleChange(
 
-autoJump(e.target.value,i*5+3);
+i,
 
-}}
+"breadthIn",
 
- />
+e.target.value
+
+)
+
+}
+
+onKeyDown={(e)=>breadthInKey(e,i)}
+
+/>
 
 </td>
 
@@ -313,7 +423,7 @@ autoJump(e.target.value,i*5+3);
 
 <input
 
-ref={(el)=>(inputRefs.current[i*5+4]=el)}
+ref={el=>inputRefs.current[i*5+4]=el}
 
 type="number"
 
@@ -324,6 +434,8 @@ className="calc-input large-input qty-input"
 value={row.qty}
 
 onFocus={(e)=>e.target.select()}
+
+onKeyDown={(e)=>qtyKey(e,i)}
 
 onChange={(e)=>
 
@@ -352,7 +464,8 @@ e.target.value
 </td>
 
 
-<td>
+
+<td className="delete-cell">
 
 <button
 
@@ -362,12 +475,11 @@ onClick={()=>deleteRow(i)}
 
 >
 
-❌
+✕
 
 </button>
 
 </td>
-
 
 </tr>
 
