@@ -29,7 +29,7 @@ export default function GraniteCalculator({
 
                         <tr>
                             <th colSpan="2">Length</th>
-                            <th rowSpan="2">×</th>
+                            <th rowSpan="1">×</th>
                             <th colSpan="2">Breadth</th>
                             <th rowSpan="2">Qty</th>
                             <th rowSpan="2">Sq Ft</th>
@@ -37,8 +37,8 @@ export default function GraniteCalculator({
                         </tr>
 
                         <tr>
-                            <th>Ft</th>
-                            <th>In</th>
+                            <th colSpan="1">Ft</th>
+                            <th colSpan="2">In</th>
                             <th>Ft</th>
                             <th>In</th>
                         </tr>

@@ -1,10 +1,69 @@
-/* =============================
-   GLOBAL RESET + BASE
-============================= */
 
 /* =============================
-   APP HEADER (BRANDING)
+   DESIGN SYSTEM
 ============================= */
+
+:root{
+
+--primary:#714dff;
+--primary-dark:#3d24c7;
+
+--secondary:#9c27b0;
+
+--bg:#f5f4f9;
+
+--card:#ffffff;
+
+--text:#1f2d3a;
+
+--border:#e4e7ec;
+
+--success:#22a06b;
+
+--shadow:
+0 8px 22px rgba(0,0,0,.08);
+
+}
+
+
+/* =============================
+   GLOBAL RESET
+============================= */
+
+*{
+
+box-sizing:border-box;
+
+}
+
+body{
+
+margin:0;
+
+background:var(--bg);
+
+font-family:"Segoe UI",system-ui,sans-serif;
+
+color:var(--text);
+
+}
+
+
+/* =============================
+   LAYOUT
+============================= */
+
+.container{
+
+max-width:640px;
+
+margin:auto;
+
+padding:16px;
+
+}
+
+
 
 /* =============================
    ULTRA PREMIUM HEADER
@@ -16,58 +75,44 @@ position:relative;
 
 overflow:hidden;
 
-background:linear-gradient(
+background:
+
+linear-gradient(
 135deg,
-rgba(30, 53, 229, 0.85),
-rgba(158, 21, 192, 0.85)
+rgba(30,53,229,.85),
+rgba(158,21,192,.85)
 );
 
-backdrop-filter: blur(12px);
+backdrop-filter:blur(12px);
 
--webkit-backdrop-filter: blur(12px);
+border-radius:18px;
 
-border-radius:16px;
+padding:24px;
 
-padding:22px;
-
-margin-bottom:18px;
+margin-bottom:20px;
 
 text-align:center;
 
 color:white;
 
-/* Glass Border */
-
 border:1px solid rgba(255,255,255,.25);
-
-/* Soft Shadow */
 
 box-shadow:
 
-0 10px 30px rgba(0,0,0,.18);
+0 12px 30px rgba(0,0,0,.18);
 
-transition:.35s;
+transition:.3s;
 
 }
-
-
-/* Slight Lift Hover */
 
 .app-header:hover{
 
 transform:translateY(-2px);
 
-box-shadow:
-
-0 15px 35px rgba(0,0,0,.22);
-
 }
 
 
-
-/* =============================
-   SHINE EFFECT
-============================= */
+/* Shine */
 
 .app-header::before{
 
@@ -83,7 +128,9 @@ width:60%;
 
 height:200%;
 
-background:linear-gradient(
+background:
+
+linear-gradient(
 
 120deg,
 
@@ -101,70 +148,17 @@ animation:shineMove 6s infinite linear;
 
 }
 
-
-/* Shine Animation */
-
 @keyframes shineMove{
 
-0%{
+0%{left:-80%;}
 
-left:-80%;
-
-}
-
-100%{
-
-left:150%;
-
-}
+100%{left:150%;}
 
 }
 
 
 
-/* =============================
-   FLOATING LIGHT ORBS
-============================= */
-
-.app-header::after{
-
-content:"";
-
-position:absolute;
-
-inset:0;
-
-background:
-
-radial-gradient(
-
-circle at 20% 20%,
-
-rgba(255,255,255,.25),
-
-transparent 40%
-
-),
-
-radial-gradient(
-
-circle at 80% 70%,
-
-rgba(255,255,255,.18),
-
-transparent 45%
-
-);
-
-pointer-events:none;
-
-}
-
-
-
-/* =============================
-   TITLE
-============================= */
+/* Title */
 
 .app-title{
 
@@ -174,27 +168,13 @@ font-size:28px;
 
 font-weight:800;
 
-letter-spacing:1.2px;
-
-text-shadow:
-
-0 2px 6px rgba(0,0,0,.2);
+letter-spacing:1px;
 
 animation:titleFloat 3s ease-in-out infinite;
 
 }
 
-
-
-/* Floating Animation */
-
 @keyframes titleFloat{
-
-0%,100%{
-
-transform:translateY(0);
-
-}
 
 50%{
 
@@ -204,115 +184,63 @@ transform:translateY(-3px);
 
 }
 
-
-
-/* =============================
-   SUB TITLE
-============================= */
-
 .app-subtitle{
-
-margin-top:6px;
-
-font-size:13px;
-
-opacity:.95;
-
-letter-spacing:.6px;
-
-}
-
-/* MAIN TITLE */
-
-.app-title{
-
-margin:0;
-
-font-size:26px;
-
-font-weight:700;
-
-letter-spacing:1px;
-
-}
-
-
-/* SUB TITLE */
-
-.app-subtitle{
-
-margin-top:5px;
 
 font-size:13px;
 
 opacity:.9;
 
-letter-spacing:.5px;
+margin-top:6px;
 
 }
 
-body {
-
-background:#f5f4f9;
-
-font-family:"Segoe UI",system-ui,sans-serif;
-
-margin:0;
-
-}
 
 
 /* =============================
-   LAYOUT
+   CARD SYSTEM
 ============================= */
 
-.container{
+.card,
+.client-field,
+.stone-type-wrapper{
 
-max-width:600px;
+background:var(--card);
 
-margin:auto;
+padding:14px;
 
-padding:15px;
+border-radius:14px;
 
-}
+box-shadow:var(--shadow);
 
+border:1px solid var(--border);
 
-/* =============================
-   CARD SYSTEM (Reusable)
-============================= */
-
-.card{
-
-background:white;
-
-padding:12px;
-
-border-radius:10px;
-
-box-shadow:0 3px 10px rgba(0,0,0,0.06);
-
-margin-bottom:10px;
+margin-bottom:12px;
 
 }
 
 
+
 /* =============================
-   FORM INPUTS
+   INPUTS
 ============================= */
 
 .full-input{
 
 width:100%;
 
-padding:10px;
+padding:11px;
 
-border-radius:8px;
+border-radius:10px;
 
-border:1px solid #ccc;
+border:1px solid var(--border);
 
-margin-top:5px;
+margin-top:6px;
 
 font-size:14px;
+
+background:#fafbff;
+
+transition:.25s;
 
 }
 
@@ -321,28 +249,31 @@ font-size:14px;
 
 width:55px;
 
-padding:6px;
+padding:7px;
 
 text-align:center;
 
-border-radius:6px;
+border-radius:8px;
 
-border:1px solid #ccc;
+border:1px solid var(--border);
+
+background:white;
 
 }
 
-
-/* Focus */
 
 input:focus{
 
 outline:none;
 
-border-color:#27ae60;
+border-color:var(--primary);
 
-box-shadow:0 0 0 2px rgba(39,174,96,0.2);
+box-shadow:
+
+0 0 0 3px rgba(94,53,255,.18);
 
 }
+
 
 
 /* =============================
@@ -355,35 +286,12 @@ display:flex;
 
 flex-direction:column;
 
-gap:10px;
+gap:12px;
+
+width:100%;
 
 }
 
-.client-field{
-
-}
-
-.stone-type-wrapper{
-
-}
-
-
-/* Apply card look */
-
-.client-field,
-.stone-type-wrapper{
-
-background:white;
-
-padding:12px;
-
-border-radius:10px;
-
-box-shadow:0 3px 10px rgba(0,0,0,0.06);
-
-margin-bottom:10px;
-
-}
 
 
 /* =============================
@@ -393,13 +301,13 @@ margin-bottom:10px;
 .add-btn,
 .pdf-btn{
 
-margin-top:10px;
+margin-top:12px;
 
-padding:10px;
+padding:12px;
 
 border:none;
 
-border-radius:8px;
+border-radius:12px;
 
 color:white;
 
@@ -409,43 +317,62 @@ cursor:pointer;
 
 font-weight:600;
 
-transition:.2s;
+transition:.25s;
+
+box-shadow:
+
+0 5px 14px rgba(0,0,0,.12);
 
 }
 
+
+/* Primary Brand Button */
 
 .add-btn{
 
-background:#27ae60;
+background:
+
+linear-gradient(
+
+135deg,
+
+var(--primary),
+
+var(--secondary)
+
+);
 
 }
-
-
-.pdf-btn{
-
-background:#2c3e50;
-
-}
-
-
-/* Hover */
 
 .add-btn:hover{
 
-background:#219150;
+transform:translateY(-2px);
+
+box-shadow:
+
+0 12px 20px rgba(0,0,0,.2);
+
+}
+
+
+/* Secondary */
+
+.pdf-btn{
+
+background:#1f2d3a;
 
 }
 
 .pdf-btn:hover{
 
-background:#1f2d3a;
+background:#121a22;
 
 }
 
 
 
 /* =============================
-   TABLE DESIGN
+   TABLE
 ============================= */
 
 .table-wrapper{
@@ -454,9 +381,13 @@ overflow-x:auto;
 
 background:white;
 
-padding:10px;
+padding:12px;
 
-border-radius:10px;
+border-radius:14px;
+
+box-shadow:var(--shadow);
+
+border:1px solid var(--border);
 
 }
 
@@ -476,33 +407,35 @@ font-size:14px;
 
 thead tr:first-child th{
 
-background:#1f2d3a;
+background:
 
-font-size:13px;
+linear-gradient(
+
+135deg,
+
+var(--primary),
+
+var(--secondary)
+
+);
 
 color:white;
+
+font-size:13px;
 
 }
 
 
 th{
 
-background:#2c3e50;
-
-color:white;
-
-padding:8px;
-
-font-weight:600;
+padding:9px;
 
 text-align:center;
 
-letter-spacing:.3px;
+font-weight:600;
 
 }
 
-
-/* Body */
 
 td{
 
@@ -517,7 +450,7 @@ border-bottom:1px solid #eee;
 
 tr:hover td{
 
-background:#f7f9fc;
+background:#fafaff;
 
 }
 
@@ -529,38 +462,40 @@ background:#f7f9fc;
 
 .summary-box{
 
-background:white;
+background:var(--card);
 
-padding:12px;
+padding:14px;
 
-border-radius:10px;
+border-radius:14px;
 
-box-shadow:0 3px 10px rgba(0,0,0,0.06);
+box-shadow:var(--shadow);
 
-margin-top:10px;
+margin-top:14px;
 
 text-align:center;
+
+border:1px solid var(--border);
 
 }
 
 
 .rate-input{
 
-width:120px;
+width:130px;
 
-padding:8px;
+padding:9px;
 
-border-radius:6px;
+border-radius:8px;
 
-border:1px solid #ccc;
+border:1px solid var(--border);
 
 text-align:center;
 
-margin:8px auto;
+margin:auto;
 
 display:block;
 
-font-weight:500;
+font-weight:600;
 
 }
 
@@ -577,17 +512,6 @@ margin-top:20px;
 }
 
 
-.calculator-selector h3{
-
-margin-bottom:10px;
-
-font-weight:600;
-
-}
-
-
-/* GRID */
-
 .calculator-grid{
 
 display:grid;
@@ -596,50 +520,58 @@ grid-template-columns:
 
 repeat(auto-fit,minmax(170px,1fr));
 
-gap:15px;
+gap:16px;
 
 }
 
 
-/* CARD */
+/* Calculator Card */
 
 .calculator-card{
 
 background:white;
 
-border-radius:12px;
+border-radius:14px;
 
-padding:20px;
+padding:22px;
 
 cursor:pointer;
 
 text-align:center;
 
-box-shadow:0 4px 10px rgba(0,0,0,0.08);
+box-shadow:var(--shadow);
 
 transition:.25s;
 
-user-select:none;
+border:1px solid var(--border);
 
 }
 
-
-/* Hover */
 
 .calculator-card:hover{
 
 transform:translateY(-4px);
 
-box-shadow:0 8px 20px rgba(0,0,0,0.15);
+box-shadow:
+
+0 10px 25px rgba(0,0,0,.15);
 
 }
 
 
-/* Active */
-
 .calculator-card.active{
 
-background:#1e88e5;
+background:
+
+linear-gradient(
+
+135deg,
+
+var(--primary),
+
+var(--secondary)
+
+);
 
 color:white;
 
@@ -654,19 +586,18 @@ margin:8px 0 5px;
 
 }
 
-
 .calculator-card p{
 
 font-size:13px;
 
-opacity:.8;
+opacity:.85;
 
 }
 
 
 
 /* =============================
-   MOBILE OPTIMIZATION
+   MOBILE
 ============================= */
 
 @media(max-width:480px){
@@ -679,7 +610,6 @@ font-size:12px;
 padding:6px;
 
 }
-
 
 .calc-input{
 
