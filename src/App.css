@@ -321,7 +321,7 @@ transition:.25s;
 
 box-shadow:
 
-0 5px 14px rgba(0,0,0,.12);
+0 5px 14px rgba(0, 0, 0, 0.12);
 
 }
 
@@ -350,22 +350,24 @@ transform:translateY(-2px);
 
 box-shadow:
 
-0 12px 20px rgba(0,0,0,.2);
+0 12px 20px rgba(0, 0, 0, 0.2);
 
 }
 
 
 /* Secondary */
 
+
 .pdf-btn{
 
-background:#1f2d3a;
+background:#37f41e;
 
 }
 
 .pdf-btn:hover{
 
-background:#121a22;
+  
+background:#142212;
 
 }
 
@@ -1007,5 +1009,35 @@ font-weight:800;
 font-size:18px;
 
 opacity:.7;
+
+}
+
+.whatsapp-btn{
+
+margin-top:10px;
+
+width:100%;
+
+padding:12px;
+
+border:none;
+
+border-radius:10px;
+
+background:#25D366;
+
+color:white;
+
+font-weight:700;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.whatsapp-btn:hover{
+
+background:#1fb954;
 
 }

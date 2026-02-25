@@ -7,6 +7,9 @@ import "./App.css";
 import GraniteCalculator from "./components/GraniteCalculator";
 
 function App() {
+
+
+
   const createRows = (count = 10) =>
     Array.from({ length: count }, () => ({
       lengthFt: "",
@@ -56,46 +59,260 @@ function App() {
   /* -------------------------------------- */
 
   // ================= PDF =================
-  const downloadPDF = () => {
-    const doc = new jsPDF();
+  // ================= PDF GENERATOR =================
+
+  const generatePDFBlob = () => {
+
+    const doc = new jsPDF({
+
+      unit: "mm",
+      format: "a4"
+
+    });
+
+
+    /* SAFE FONT */
+
+    doc.setFont("helvetica", "bold");
 
     doc.setFontSize(18);
-    doc.text("ANNA STONE - Invoice", 14, 20);
+
+    doc.text("ANNA STONE - ESTIMATE", 14, 20);
+
+
+
+    doc.setFont("helvetica", "normal");
 
     doc.setFontSize(12);
-    doc.text(`Customer: ${customerName || "-"}`, 14, 30);
-    doc.text(`Date: ${invoiceDate}`, 14, 38);
+
+    doc.text(`Customer : ${customerName || "-"}`, 14, 30);
+
+    doc.text(`Date : ${invoiceDate}`, 14, 38);
+
+
 
     const finalStoneType =
-      stoneType === "custom" ? customStoneType : stoneType;
-    if (finalStoneType)
-      doc.text(`Stone Type: ${finalStoneType}`, 14, 46);
 
-    const tableColumn = ["Length", "Breadth", "Qty", "Sq Ft"];
+      stoneType === "custom"
+
+        ? customStoneType
+
+        : stoneType;
+
+    if (finalStoneType) {
+
+      doc.text(`Stone Type : ${finalStoneType}`, 14, 46);
+
+    }
+
+
+    /* TABLE */
+
+    const tableColumn = [
+
+      "Length",
+
+      "Breadth",
+
+      "Qty",
+
+      "Sq Ft"
+
+    ];
+
+
 
     const tableRows = [];
 
-    rows.forEach((row) => {
+    rows.forEach(row => {
+
       if (parseFloat(row.sqft) > 0) {
+
         tableRows.push([
-          `${row.lengthFt}' ${row.lengthIn}"`,
-          `${row.breadthFt}' ${row.breadthIn}"`,
-          row.qty,
-          row.sqft
+
+          `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
+
+          `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
+
+          String(row.qty),
+
+          String(row.sqft)
+
         ]);
+
       }
+
     });
 
-    autoTable(doc, { startY: 54, head: [tableColumn], body: tableRows });
+
+    autoTable(doc, {
+
+      startY: 54,
+
+      head: [tableColumn],
+
+      body: tableRows,
+
+      styles: {
+
+        font: "helvetica",
+
+        fontSize: 11
+
+      }
+
+    });
+
 
     const finalY = doc.lastAutoTable.finalY || 60;
 
-    doc.text(`Total Sq Ft: ${totalSqft.toFixed(2)}`, 14, finalY + 10);
-    doc.text(`Rate: ₹ ${rate}`, 14, finalY + 18);
-    doc.text(`Grand Total: ₹ ${grandTotal.toFixed(2)}`, 14, finalY + 26);
 
-    doc.save("Stone_Invoice.pdf");
+
+    doc.setFont("helvetica", "bold");
+
+    doc.text(
+
+      `Total Sq Ft : ${totalSqft.toFixed(2)}`,
+
+      14,
+
+      finalY + 12
+
+    );
+
+    doc.text(
+
+      `Rate : Rs ${rate || 0}`,
+
+      14,
+
+      finalY + 20
+
+    );
+
+    doc.text(
+
+      `Grand Total : Rs ${grandTotal.toFixed(2)}`,
+
+      14,
+
+      finalY + 28
+
+    );
+
+
+
+    return doc.output("blob");
+
   };
+
+
+
+
+
+  /* DOWNLOAD PDF */
+
+  const downloadPDF = () => {
+
+    const blob = generatePDFBlob();
+
+
+   // ================= WHATSAPP SHARE =================
+
+
+
+    /* UNIQUE FILE NAME */
+
+    const now = new Date();
+
+
+
+    const datePart =
+
+      now.toISOString()
+
+        .replace(/[-:]/g, "")
+
+        .split(".")[0]
+
+        .replace("T", "_");
+
+
+
+    const safeCustomer =
+
+      (customerName || "Customer")
+
+        .replace(/\s+/g, "_");
+
+
+
+    const fileName =
+
+      `AnnaStone_Estimate_${safeCustomer}_${datePart}.pdf`;
+
+
+
+    const url = URL.createObjectURL(blob);
+
+
+
+    const a = document.createElement("a");
+
+    a.href = url;
+
+    a.download = fileName;
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+  };
+
+  const shareWhatsAppPDF = async () => {
+
+const blob = generatePDFBlob();
+
+const file = new File(
+
+[blob],
+
+"AnnaStone_Estimate.pdf",
+
+{
+
+type:"application/pdf"
+
+}
+
+);
+
+if(navigator.share){
+
+try{
+
+await navigator.share({
+
+title:"Anna Stone Estimate",
+
+files:[file]
+
+});
+
+}catch(e){
+
+console.log("Share Cancelled");
+
+}
+
+}else{
+
+alert("Sharing supported only on Mobile Chrome.");
+
+}
+
+};
+
 
   // ================= CALC =================
   const handleChange = (index, field, value) => {
@@ -133,22 +350,22 @@ function App() {
   return (
     <div className="container">
 
-    
-<div className="app-header">
 
-<h1 className="app-title">
+      <div className="app-header">
 
-🪨 ANNA STONE
+        <h1 className="app-title">
 
-</h1>
+          🪨 ANNA STONE
 
-<p className="app-subtitle">
+        </h1>
 
-Smart Stone Area Calculator • Fast Billing • Accurate Measurement
+        <p className="app-subtitle">
 
-</p>
+          Smart Stone Area Calculator • Fast Billing • Accurate Measurement
 
-</div>
+        </p>
+
+      </div>
 
 
       {/* HEADER */}
@@ -263,6 +480,7 @@ Smart Stone Area Calculator • Fast Billing • Accurate Measurement
           totalSqft={totalSqft}
           grandTotal={grandTotal}
           downloadPDF={downloadPDF}
+          shareWhatsAppPDF={shareWhatsAppPDF}
 
         />
 

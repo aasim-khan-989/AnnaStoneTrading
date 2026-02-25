@@ -11,7 +11,8 @@ rate,
 setRate,
 totalSqft,
 grandTotal,
-downloadPDF
+downloadPDF,
+shareWhatsAppPDF
 
 }) {
 
@@ -554,6 +555,15 @@ onClick={downloadPDF}
 >
 
 Download PDF
+
+</button>
+
+<button
+className="whatsapp-btn"
+onClick={shareWhatsAppPDF}
+>
+
+🟢 Share on WhatsApp
 
 </button>
 
