@@ -1,307 +1,452 @@
-import React from "react";
+
+
+import React,{useState} from "react";
 
 export default function GraniteCalculator({
 
-    rows,
-    handleChange,
-    inputRefs,
-    autoJump,
-    focusNext,
-    deleteRow,
-    addRow,
-    rate,
-    setRate,
-    totalSqft,
-    grandTotal,
-    downloadPDF
+rows,
+handleChange,
+inputRefs,
+autoJump,
+focusNext,
+deleteRow,
+addRow,
+rate,
+setRate,
+totalSqft,
+grandTotal,
+downloadPDF
 
-}) {
+}){
 
-    return (
 
-        <>
+/* ===== SEPARATE FT TOGGLES ===== */
 
-            <div className="table-wrapper">
+const [showLengthFt,setShowLengthFt]=useState(false);
 
-                <table>
+const [showBreadthFt,setShowBreadthFt]=useState(false);
 
-                    <thead>
 
-                        <tr>
-                            <th colSpan="2">Length</th>
-                            <th rowSpan="1">×</th>
-                            <th colSpan="2">Breadth</th>
-                            <th rowSpan="2">Qty</th>
-                            <th rowSpan="2">Sq Ft</th>
-                            <th rowSpan="2">Delete</th>
-                        </tr>
 
-                        <tr>
-                            <th colSpan="1">Ft</th>
-                            <th colSpan="2">In</th>
-                            <th>Ft</th>
-                            <th>In</th>
-                        </tr>
+return(
 
-                    </thead>
+<>
 
-                    <tbody>
+<div className="table-wrapper">
 
-                        {rows.map((row, i) => (
+<table>
 
-                            <tr key={i}>
+<thead>
 
-                                <td>
 
-                                    <input
+{/* HEADER ROW 1 */}
 
-                                        ref={(el) => (inputRefs.current[i * 5] = el)}
+<tr>
 
-                                        className="calc-input"
+<th colSpan={showLengthFt?2:1}>
 
-                                        value={row.lengthFt}
+Length
 
-                                        onChange={(e) => {
+</th>
 
-                                            handleChange(i, "lengthFt", e.target.value);
+<th>
 
-                                            autoJump(e.target.value, i * 5);
+×
 
-                                        }}
+</th>
 
-                                        onKeyDown={(e) => {
+<th colSpan={showBreadthFt?2:1}>
 
-                                            if (e.key === " " || e.key === "Enter") {
+Breadth
 
-                                                e.preventDefault();
+</th>
 
-                                                focusNext(i * 5);
+<th>
 
-                                            }
+Qty
 
-                                        }}
+</th>
 
-                                    />
+<th>
 
-                                </td>
+SqFt
 
+</th>
 
+<th>
 
-                                <td>
+Delete
 
-                                    <input
+</th>
 
-                                        ref={(el) => (inputRefs.current[i * 5 + 1] = el)}
+</tr>
 
-                                        className="calc-input"
 
-                                        value={row.lengthIn}
 
-                                        onChange={(e) => {
+{/* HEADER ROW 2 */}
 
-                                            handleChange(i, "lengthIn", e.target.value);
+<tr>
 
-                                            autoJump(e.target.value, i * 5 + 1);
+{/* LENGTH TOGGLE */}
 
-                                        }}
+<th
 
-                                        onKeyDown={(e) => {
+colSpan={showLengthFt?2:1}
 
-                                            if (e.key === " " || e.key === "Enter") {
+className="ft-toggle-header"
 
-                                                e.preventDefault();
+onClick={()=>setShowLengthFt(v=>!v)}
 
-                                                focusNext(i * 5 + 1);
+>
 
-                                            }
+{showLengthFt ? "Hide Ft" : "Show Ft"}
 
-                                        }}
+</th>
 
-                                    />
 
-                                </td>
+<th></th>
 
-                                <td>×</td>
 
+{/* BREADTH TOGGLE */}
 
-                                <td>
+<th
 
-                                    <input
+colSpan={showBreadthFt?2:1}
 
-                                        ref={(el) => (inputRefs.current[i * 5 + 2] = el)}
+className="ft-toggle-header"
 
-                                        className="calc-input"
+onClick={()=>setShowBreadthFt(v=>!v)}
 
-                                        value={row.breadthFt}
+>
 
-                                        onChange={(e) => {
+{showBreadthFt ? "Hide Ft" : "Show Ft"}
 
-                                            handleChange(i, "breadthFt", e.target.value);
+</th>
 
-                                            autoJump(e.target.value, i * 5 + 2);
 
-                                        }}
+<th></th>
 
-                                        onKeyDown={(e) => {
+<th></th>
 
-                                            if (e.key === " " || e.key === "Enter") {
+<th></th>
 
-                                                e.preventDefault();
+</tr>
 
-                                                focusNext(i * 5 + 2);
 
-                                            }
 
-                                        }}
+{/* HEADER ROW 3 */}
 
-                                    />
+<tr>
 
-                                </td>
+{showLengthFt && <th>Ft</th>}
 
+<th>In</th>
 
-                                <td>
+<th></th>
 
-                                    <input
+{showBreadthFt && <th>Ft</th>}
 
-                                        ref={(el) => (inputRefs.current[i * 5 + 3] = el)}
+<th>In</th>
 
-                                        className="calc-input"
+<th>Qty</th>
 
-                                        value={row.breadthIn}
+<th>SqFt</th>
 
-                                        onChange={(e) => {
+<th>❌</th>
 
-                                            handleChange(i, "breadthIn", e.target.value);
+</tr>
 
-                                            autoJump(e.target.value, i * 5 + 3);
+</thead>
 
-                                        }}
 
-                                        onKeyDown={(e) => {
 
-                                            if (e.key === " " || e.key === "Enter") {
+<tbody>
 
-                                                e.preventDefault();
+{rows.map((row,i)=>(
 
-                                                focusNext(i * 5 + 3);
+<tr key={i}>
 
-                                            }
 
-                                        }}
+{/* LENGTH FT */}
 
-                                    />
+{showLengthFt &&(
 
-                                </td>
+<td>
 
+<input
 
+ref={(el)=>(inputRefs.current[i*5]=el)}
 
-                                <td>
+className="calc-input large-input"
 
-                                    <input
+value={row.lengthFt}
 
-                                        ref={(el) => (inputRefs.current[i * 5 + 4] = el)}
+inputMode="numeric"
 
-                                        type="number"
+onChange={(e)=>{
 
-                                        min="1"
+handleChange(i,"lengthFt",e.target.value);
 
-                                        className="calc-input"
+autoJump(e.target.value,i*5);
 
-                                        value={row.qty}
+}}
 
-                                        onChange={(e) => handleChange(i, "qty", e.target.value)}
+onKeyDown={(e)=>{
 
-                                        onKeyDown={(e) => {
+if(e.key===" "||e.key==="Enter"){
 
-                                            if (e.key === " " || e.key === "Enter") {
+e.preventDefault();
 
-                                                e.preventDefault();
+focusNext(i*5);
 
-                                                focusNext(i * 5 + 4);
+}
 
-                                            }
+}}
 
-                                        }}
+ />
 
-                                    />
+</td>
 
-                                </td>
+)}
 
 
-                                <td>{row.sqft}</td>
 
-                                <td>
+{/* LENGTH IN */}
 
-                                    <button onClick={() => deleteRow(i)}>
+<td>
 
-                                        ❌
+<input
 
-                                    </button>
+ref={(el)=>(inputRefs.current[i*5+1]=el)}
 
-                                </td>
+className="calc-input large-input"
 
-                            </tr>
+value={row.lengthIn}
 
-                        ))}
+inputMode="numeric"
 
-                    </tbody>
+onChange={(e)=>{
 
-                </table>
+handleChange(i,"lengthIn",e.target.value);
 
-            </div>
+autoJump(e.target.value,i*5+1);
 
+}}
 
+ />
 
-            <button
+</td>
 
-                className="add-btn"
 
-                onClick={addRow}
 
-            >
+<td className="multiply">
 
-                Add Piece
+×
 
-            </button>
+</td>
 
 
 
-            <div className="summary-box">
+{/* BREADTH FT */}
 
-                <label>Rate (₹ / Sq Ft)</label>
+{showBreadthFt &&(
 
-                <input
+<td>
 
-                    className="rate-input"
+<input
 
-                    value={rate}
+ref={(el)=>(inputRefs.current[i*5+2]=el)}
 
-                    onChange={(e) => setRate(e.target.value)}
+className="calc-input large-input"
 
-                />
+value={row.breadthFt}
 
-                <p>Total Sq Ft: {totalSqft.toFixed(2)}</p>
+inputMode="numeric"
 
-                <h2>Grand Total ₹ {grandTotal.toFixed(2)}</h2>
+onChange={(e)=>{
 
-            </div>
+handleChange(i,"breadthFt",e.target.value);
 
+autoJump(e.target.value,i*5+2);
 
+}}
 
-            <button
+ />
 
-                className="pdf-btn"
+</td>
 
-                onClick={downloadPDF}
+)}
 
-            >
 
-                Download PDF
 
-            </button>
+{/* BREADTH IN */}
 
-        </>
+<td>
 
-    );
+<input
+
+ref={(el)=>(inputRefs.current[i*5+3]=el)}
+
+className="calc-input large-input"
+
+value={row.breadthIn}
+
+inputMode="numeric"
+
+onChange={(e)=>{
+
+handleChange(i,"breadthIn",e.target.value);
+
+autoJump(e.target.value,i*5+3);
+
+}}
+
+ />
+
+</td>
+
+
+
+{/* QTY */}
+
+<td>
+
+<input
+
+ref={(el)=>(inputRefs.current[i*5+4]=el)}
+
+type="number"
+
+min="1"
+
+className="calc-input large-input qty-input"
+
+value={row.qty}
+
+onFocus={(e)=>e.target.select()}
+
+onChange={(e)=>
+
+handleChange(
+
+i,
+
+"qty",
+
+e.target.value
+
+)
+
+}
+
+/>
+
+</td>
+
+
+
+<td className="sqft-cell">
+
+{row.sqft}
+
+</td>
+
+
+<td>
+
+<button
+
+className="delete-btn"
+
+onClick={()=>deleteRow(i)}
+
+>
+
+❌
+
+</button>
+
+</td>
+
+
+</tr>
+
+))}
+
+</tbody>
+
+</table>
+
+</div>
+
+
+
+<button
+
+className="add-btn"
+
+onClick={addRow}
+
+>
+
+Add Piece
+
+</button>
+
+
+
+<div className="summary-box">
+
+<label>
+
+Rate (₹ / Sq Ft)
+
+</label>
+
+<input
+
+className="rate-input"
+
+value={rate}
+
+onChange={(e)=>setRate(e.target.value)}
+
+/>
+
+<p>
+
+Total Sq Ft :
+
+{totalSqft.toFixed(2)}
+
+</p>
+
+<h2>
+
+Grand Total ₹
+
+{grandTotal.toFixed(2)}
+
+</h2>
+
+</div>
+
+
+
+<button
+
+className="pdf-btn"
+
+onClick={downloadPDF}
+
+>
+
+Download PDF
+
+</button>
+
+</>
+
+);
 
 }
