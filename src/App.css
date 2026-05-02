@@ -1241,3 +1241,227 @@ transform:translateY(0);
 }
 
 
+/* =====================================
+   PREMIUM APP ANIMATIONS / TRANSITIONS
+   Paste at bottom of App.css
+===================================== */
+
+/* Smooth whole page feel */
+html{
+scroll-behavior:smooth;
+}
+
+body{
+animation:pageLoad .6s ease;
+}
+
+@keyframes pageLoad{
+from{
+opacity:0;
+transform:translateY(10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+/* =====================================
+   COMPONENT SWITCH ANIMATION
+   Wrap calculator components with
+   className="calculator-content"
+===================================== */
+
+.calculator-content{
+animation:componentSwap .45s ease;
+transform-origin:top center;
+}
+
+@keyframes componentSwap{
+0%{
+opacity:0;
+transform:
+translateY(18px)
+scale(.98);
+filter:blur(3px);
+}
+100%{
+opacity:1;
+transform:
+translateY(0)
+scale(1);
+filter:blur(0);
+}
+}
+
+/* =====================================
+   CARD PREMIUM FEEL
+===================================== */
+
+.calculator-card{
+position:relative;
+overflow:hidden;
+transition:
+transform .28s ease,
+box-shadow .28s ease,
+background .28s ease;
+}
+
+.calculator-card::before{
+content:"";
+position:absolute;
+top:0;
+left:-120%;
+width:70%;
+height:100%;
+background:linear-gradient(
+90deg,
+transparent,
+rgba(255,255,255,.35),
+transparent
+);
+transition:.6s;
+}
+
+.calculator-card:hover::before{
+left:130%;
+}
+
+.calculator-card:hover{
+transform:
+translateY(-5px)
+scale(1.02);
+box-shadow:
+0 18px 30px rgba(0,0,0,.12);
+}
+
+/* Active pulse */
+.calculator-card.active{
+animation:activePulse .8s ease;
+}
+
+@keyframes activePulse{
+0%{
+transform:scale(.96);
+}
+60%{
+transform:scale(1.04);
+}
+100%{
+transform:scale(1.03);
+}
+}
+
+/* =====================================
+   INPUT PREMIUM FOCUS
+===================================== */
+
+.full-input,
+.calc-input,
+.other-textarea,
+.rate-input{
+transition:
+all .22s ease;
+}
+
+.full-input:focus,
+.calc-input:focus,
+.other-textarea:focus,
+.rate-input:focus{
+transform:scale(1.03);
+box-shadow:
+0 0 0 4px rgba(113,77,255,.12);
+}
+
+/* =====================================
+   TABLE ENTRY ANIMATION
+===================================== */
+
+tbody tr{
+animation:rowFade .35s ease;
+}
+
+@keyframes rowFade{
+from{
+opacity:0;
+transform:translateX(-8px);
+}
+to{
+opacity:1;
+transform:translateX(0);
+}
+}
+
+tbody tr:hover{
+transform:scale(1.005);
+transition:.18s;
+}
+
+/* =====================================
+   BUTTON PREMIUM
+===================================== */
+
+.add-btn,
+.pdf-btn,
+.whatsapp-btn{
+transition:
+transform .22s ease,
+box-shadow .22s ease,
+filter .22s ease;
+}
+
+.add-btn:hover,
+.pdf-btn:hover,
+.whatsapp-btn:hover{
+transform:
+translateY(-3px)
+scale(1.01);
+filter:brightness(1.05);
+box-shadow:
+0 14px 24px rgba(0,0,0,.16);
+}
+
+.add-btn:active,
+.pdf-btn:active,
+.whatsapp-btn:active{
+transform:scale(.98);
+}
+
+/* =====================================
+   TOTAL BOX GLOW
+===================================== */
+
+.grand-total{
+animation:glowBox 3s infinite ease-in-out;
+}
+
+@keyframes glowBox{
+0%,100%{
+box-shadow:0 0 0 rgba(0,0,0,0);
+}
+50%{
+box-shadow:0 10px 22px rgba(113,77,255,.22);
+}
+}
+
+/* =====================================
+   MOBILE LIGHTER ANIMATION
+===================================== */
+
+@media(max-width:600px){
+
+.calculator-content{
+animation-duration:.32s;
+}
+
+.calculator-card:hover{
+transform:none;
+}
+
+.full-input:focus,
+.calc-input:focus,
+.other-textarea:focus{
+transform:none;
+}
+
+}
