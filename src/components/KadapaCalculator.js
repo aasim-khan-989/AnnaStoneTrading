@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function GraniteCalculator({
+export default function KadapaCalculator({
 
 rows,
 handleChange,
@@ -569,7 +569,6 @@ Grand Total ₹
 
 
 </div>
-
 
 
 

@@ -1,15 +1,13 @@
 
-
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import "./App.css";
+
 import GraniteCalculator from "./components/GraniteCalculator";
+import KadapaCalculator from "./components/KadapaCalculator";
 
-function App() {
-
-
-
+export default function App() {
   const createRows = (count = 10) =>
     Array.from({ length: count }, () => ({
       lengthFt: "",
@@ -17,11 +15,16 @@ function App() {
       breadthFt: "",
       breadthIn: "",
       qty: 1,
-      sqft: 0
+      sqft: 0,
     }));
 
+  const inputRefs = useRef([]);
 
-  const [calculatorType, setCalculatorType] = useState("");
+  /* =========================
+     COMMON
+  ========================= */
+  const [calculatorType, setCalculatorType] = useState("granite");
+
   const [customerName, setCustomerName] = useState("");
   const [invoiceDate, setInvoiceDate] = useState(
     new Date().toISOString().split("T")[0]
@@ -36,373 +39,341 @@ function App() {
     "Granite - Z Black",
     "Granite - Telephone Black",
     "Granite - Steel Black",
-    "Kadapa Stone"
+    "Kadapa Stone",
   ];
 
-  const [rows, setRows] = useState(createRows());
-  const [rate, setRate] = useState("");
+  /* =========================
+     GRANITE DATA
+  ========================= */
+  const [graniteRows, setGraniteRows] = useState(createRows());
+  const [graniteRate, setGraniteRate] = useState("");
 
-  /* ---------- AUTO FOCUS LOGIC ---------- */
-  const inputRefs = useRef([]);
+  /* =========================
+     KADAPA DATA
+  ========================= */
+  const [kadapaRows, setKadapaRows] = useState(createRows());
+  const [kadapaRate, setKadapaRate] = useState("");
 
-  const focusNext = (index) => {
-    if (inputRefs.current[index + 1]) {
-      inputRefs.current[index + 1].focus();
-    }
+  /* =========================
+     COMMON HELPERS
+  ========================= */
+  const addRow = (rows, setRows) => {
+    setRows([
+      ...rows,
+      {
+        lengthFt: "",
+        lengthIn: "",
+        breadthFt: "",
+        breadthIn: "",
+        qty: 1,
+        sqft: 0,
+      },
+    ]);
   };
 
-  const autoJump = (value, refIndex) => {
-    if (value === " " || value.length >= 3) {
-      focusNext(refIndex);
-    }
-  };
-  /* -------------------------------------- */
-
-  // ================= PDF =================
-  // ================= PDF GENERATOR =================
-
-  const generatePDFBlob = () => {
-
-    const doc = new jsPDF({
-
-      unit: "mm",
-      format: "a4"
-
-    });
-
-
-    /* SAFE FONT */
-
-    doc.setFont("helvetica", "bold");
-
-    doc.setFontSize(18);
-
-    doc.text("ANNA STONE - ESTIMATE", 14, 20);
-
-
-
-    doc.setFont("helvetica", "normal");
-
-    doc.setFontSize(12);
-
-    doc.text(`Customer : ${customerName || "-"}`, 14, 30);
-
-    doc.text(`Date : ${invoiceDate}`, 14, 38);
-
-
-
-    const finalStoneType =
-
-      stoneType === "custom"
-
-        ? customStoneType
-
-        : stoneType;
-
-    if (finalStoneType) {
-
-      doc.text(`Stone Type : ${finalStoneType}`, 14, 46);
-
-    }
-
-
-    /* TABLE */
-
-    const tableColumn = [
-
-      "Length",
-
-      "Breadth",
-
-      "Qty",
-
-      "Sq Ft"
-
-    ];
-
-
-
-    const tableRows = [];
-
-    rows.forEach(row => {
-
-      if (parseFloat(row.sqft) > 0) {
-
-        tableRows.push([
-
-          `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
-
-          `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
-
-          String(row.qty),
-
-          String(row.sqft)
-
-        ]);
-
-      }
-
-    });
-
-
-    autoTable(doc, {
-
-      startY: 54,
-
-      head: [tableColumn],
-
-      body: tableRows,
-
-      styles: {
-
-        font: "helvetica",
-
-        fontSize: 11
-
-      }
-
-    });
-
-
-    const finalY = doc.lastAutoTable.finalY || 60;
-
-
-
-    doc.setFont("helvetica", "bold");
-
-    doc.text(
-
-      `Total Sq Ft : ${totalSqft.toFixed(2)}`,
-
-      14,
-
-      finalY + 12
-
-    );
-
-    doc.text(
-
-      `Rate : Rs ${rate || 0}`,
-
-      14,
-
-      finalY + 20
-
-    );
-
-    doc.text(
-
-      `Grand Total : Rs ${grandTotal.toFixed(2)}`,
-
-      14,
-
-      finalY + 28
-
-    );
-
-
-
-    return doc.output("blob");
-
+  const deleteRow = (rows, setRows, index) => {
+    setRows(rows.filter((_, i) => i !== index));
   };
 
-
-
-
-
-  /* DOWNLOAD PDF */
-
-  const downloadPDF = () => {
-
-    const blob = generatePDFBlob();
-
-
-   // ================= WHATSAPP SHARE =================
-
-
-
-    /* UNIQUE FILE NAME */
-
-    const now = new Date();
-
-
-
-    const datePart =
-
-      now.toISOString()
-
-        .replace(/[-:]/g, "")
-
-        .split(".")[0]
-
-        .replace("T", "_");
-
-
-
-    const safeCustomer =
-
-      (customerName || "Customer")
-
-        .replace(/\s+/g, "_");
-
-
-
-    const fileName =
-
-      `AnnaStone_Estimate_${safeCustomer}_${datePart}.pdf`;
-
-
-
-    const url = URL.createObjectURL(blob);
-
-
-
-    const a = document.createElement("a");
-
-    a.href = url;
-
-    a.download = fileName;
-
-    a.click();
-
-    URL.revokeObjectURL(url);
-
-  };
-
-  const shareWhatsAppPDF = async () => {
-
-const blob = generatePDFBlob();
-
-const file = new File(
-
-[blob],
-
-"AnnaStone_Estimate.pdf",
-
-{
-
-type:"application/pdf"
-
-}
-
-);
-
-if(navigator.share){
-
-try{
-
-await navigator.share({
-
-title:"Anna Stone Estimate",
-
-files:[file]
-
-});
-
-}catch(e){
-
-console.log("Share Cancelled");
-
-}
-
-}else{
-
-alert("Sharing supported only on Mobile Chrome.");
-
-}
-
-};
-
-
-  // ================= CALC =================
-  const handleChange = (index, field, value) => {
-    const updatedRows = [...rows];
-    updatedRows[index][field] = value;
-
-    const lft = parseFloat(updatedRows[index].lengthFt) || 0;
-    const lin = parseFloat(updatedRows[index].lengthIn) || 0;
-    const bft = parseFloat(updatedRows[index].breadthFt) || 0;
-    const bin = parseFloat(updatedRows[index].breadthIn) || 0;
-    const qty = parseFloat(updatedRows[index].qty) || 1;
-
+  /* =========================
+     GRANITE FORMULA
+     +1 inch each side
+  ========================= */
+  const handleGraniteChange = (index, field, value) => {
+    const updated = [...graniteRows];
+    updated[index][field] = value;
+
+    const lft = parseFloat(updated[index].lengthFt) || 0;
+    const lin = parseFloat(updated[index].lengthIn) || 0;
+    const bft = parseFloat(updated[index].breadthFt) || 0;
+    const bin = parseFloat(updated[index].breadthIn) || 0;
+    const qty = parseFloat(updated[index].qty) || 1;
 
     if (lft || lin || bft || bin) {
       const L = lft * 12 + lin + 1;
       const B = bft * 12 + bin + 1;
-      updatedRows[index].sqft = (((L * B) / 144) * qty).toFixed(2);
-    } else updatedRows[index].sqft = 0;
 
-    setRows(updatedRows);
+      updated[index].sqft = (((L * B) / 144) * qty).toFixed(2);
+    } else {
+      updated[index].sqft = 0;
+    }
+
+    setGraniteRows(updated);
   };
 
-  const addRow = () =>
-    setRows([
-      ...rows,
-      { lengthFt: "", lengthIn: "", breadthFt: "", breadthIn: "", qty: 1, sqft: 0 }
+  /* =========================
+     KADAPA FORMULA
+     1-6 = 6
+     7-12 = 12
+     13-18 = 18 etc
+  ========================= */
+ const kadapaRound = (inch) => {
+  if (inch <= 0) return 0;
 
-    ]);
+  if (inch >= 1 && inch <= 5) return 6;
 
-  const deleteRow = (i) => setRows(rows.filter((_, idx) => idx !== i));
+  return Math.floor(inch / 6) * 6 + 6;
+};
 
-  const totalSqft = rows.reduce((s, r) => s + parseFloat(r.sqft || 0), 0);
-  const grandTotal = totalSqft * (parseFloat(rate) || 0);
+  const handleKadapaChange = (index, field, value) => {
+    const updated = [...kadapaRows];
+    updated[index][field] = value;
+
+    const lft = parseFloat(updated[index].lengthFt) || 0;
+    const lin = parseFloat(updated[index].lengthIn) || 0;
+    const bft = parseFloat(updated[index].breadthFt) || 0;
+    const bin = parseFloat(updated[index].breadthIn) || 0;
+    const qty = parseFloat(updated[index].qty) || 1;
+
+    const rawL = lft * 12 + lin;
+    const rawB = bft * 12 + bin;
+
+    const L = kadapaRound(rawL);
+    const B = kadapaRound(rawB);
+
+    updated[index].sqft = (((L * B) / 144) * qty).toFixed(2);
+
+    setKadapaRows(updated);
+  };
+
+  /* =========================
+     TOTALS
+  ========================= */
+  const graniteSqft = graniteRows.reduce(
+    (sum, row) => sum + parseFloat(row.sqft || 0),
+    0
+  );
+
+  const graniteTotal =
+    graniteSqft * (parseFloat(graniteRate) || 0);
+
+  const kadapaSqft = kadapaRows.reduce(
+    (sum, row) => sum + parseFloat(row.sqft || 0),
+    0
+  );
+
+  const kadapaTotal =
+    kadapaSqft * (parseFloat(kadapaRate) || 0);
+
+  const finalGrandTotal =
+    graniteTotal + kadapaTotal;
+
+  /* =========================
+     PDF
+  ========================= */
+  const generatePDFBlob = () => {
+    const doc = new jsPDF({
+      unit: "mm",
+      format: "a4",
+    });
+
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("ANNA STONE ESTIMATE", 14, 18);
+
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+
+    doc.text(`Customer : ${customerName || "-"}`, 14, 28);
+    doc.text(`Date : ${invoiceDate}`, 14, 35);
+
+    const finalStone =
+      stoneType === "custom"
+        ? customStoneType
+        : stoneType;
+
+    if (finalStone) {
+      doc.text(`Stone Type : ${finalStone}`, 14, 42);
+    }
+
+    let currentY = 50;
+
+    /* GRANITE SECTION */
+    const graniteBody = [];
+
+    graniteRows.forEach((row) => {
+      if (parseFloat(row.sqft) > 0) {
+        graniteBody.push([
+          `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
+          `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
+          row.qty,
+          row.sqft,
+        ]);
+      }
+    });
+
+    if (graniteBody.length > 0) {
+      doc.setFont("helvetica", "bold");
+      doc.text("GRANITE", 14, currentY);
+
+      autoTable(doc, {
+        startY: currentY + 3,
+        head: [["Length", "Breadth", "Qty", "Sq Ft"]],
+        body: graniteBody,
+      });
+
+      currentY = doc.lastAutoTable.finalY + 8;
+
+      doc.text(
+        `Granite Rate : Rs ${graniteRate || 0}`,
+        14,
+        currentY
+      );
+      doc.text(
+        `Granite Total : Rs ${graniteTotal.toFixed(2)}`,
+        110,
+        currentY
+      );
+
+      currentY += 10;
+    }
+
+    /* KADAPA SECTION */
+    const kadapaBody = [];
+
+    kadapaRows.forEach((row) => {
+      if (parseFloat(row.sqft) > 0) {
+        kadapaBody.push([
+          `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
+          `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
+          row.qty,
+          row.sqft,
+        ]);
+      }
+    });
+
+    if (kadapaBody.length > 0) {
+      doc.setFont("helvetica", "bold");
+      doc.text("KADAPA", 14, currentY);
+
+      autoTable(doc, {
+        startY: currentY + 3,
+        head: [["Length", "Breadth", "Qty", "Sq Ft"]],
+        body: kadapaBody,
+      });
+
+      currentY = doc.lastAutoTable.finalY + 8;
+
+      doc.text(
+        `Kadapa Rate : Rs ${kadapaRate || 0}`,
+        14,
+        currentY
+      );
+      doc.text(
+        `Kadapa Total : Rs ${kadapaTotal.toFixed(2)}`,
+        110,
+        currentY
+      );
+
+      currentY += 12;
+    }
+
+    /* FINAL TOTAL */
+    doc.setFontSize(14);
+    doc.text(
+      `FINAL GRAND TOTAL : Rs ${finalGrandTotal.toFixed(
+        2
+      )}`,
+      14,
+      currentY
+    );
+
+    return doc.output("blob");
+  };
+
+  const downloadPDF = () => {
+    const blob = generatePDFBlob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "AnnaStone_Estimate.pdf";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  };
+
+  const shareWhatsAppPDF = async () => {
+    const blob = generatePDFBlob();
+
+    const file = new File(
+      [blob],
+      "AnnaStone_Estimate.pdf",
+      {
+        type: "application/pdf",
+      }
+    );
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Anna Stone Estimate",
+          files: [file],
+        });
+      } catch (e) {}
+    } else {
+      alert("Sharing only supported on mobile.");
+    }
+  };
 
   return (
     <div className="container">
-
-
       <div className="app-header">
-
         <h1 className="app-title">
-
           🪨 ANNA STONE
-
         </h1>
 
         <p className="app-subtitle">
-
-          Smart Stone Area Calculator • Fast Billing • Accurate Measurement
-
+          Smart Stone Area Calculator
         </p>
-
       </div>
 
-
-      {/* HEADER */}
+      {/* CUSTOMER */}
       <div className="client-wrapper">
         <div className="client-field">
           <label>Customer Name</label>
           <input
             className="full-input"
             value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
+            onChange={(e) =>
+              setCustomerName(e.target.value)
+            }
           />
         </div>
 
         <div className="client-field">
           <label>Date</label>
           <input
-            className="full-input"
             type="date"
+            className="full-input"
             value={invoiceDate}
-            onChange={(e) => setInvoiceDate(e.target.value)}
+            onChange={(e) =>
+              setInvoiceDate(e.target.value)
+            }
           />
         </div>
       </div>
 
-      {/* STONE TYPE */}
+      {/* STONE */}
       <div className="stone-type-wrapper">
         <label>Stone Type</label>
+
         <select
           className="full-input"
           value={stoneType}
-          onChange={(e) => setStoneType(e.target.value)}
+          onChange={(e) =>
+            setStoneType(e.target.value)
+          }
         >
           <option value="">Select</option>
-          {popularStones.map((s, i) => (
-            <option key={i}>{s}</option>
+
+          {popularStones.map((stone, i) => (
+            <option key={i}>{stone}</option>
           ))}
-          <option value="custom">Custom</option>
+
+          <option value="custom">
+            Custom
+          </option>
         </select>
 
         {stoneType === "custom" && (
@@ -410,90 +381,116 @@ alert("Sharing supported only on Mobile Chrome.");
             className="full-input"
             placeholder="Enter stone"
             value={customStoneType}
-            onChange={(e) => setCustomStoneType(e.target.value)}
+            onChange={(e) =>
+              setCustomStoneType(
+                e.target.value
+              )
+            }
           />
         )}
       </div>
 
-      {/* CALCULATOR SELECTOR */}
-
+      {/* SELECTOR */}
       <div className="calculator-selector">
-
         <h3>Select Calculator</h3>
 
         <div className="calculator-grid">
-
           <div
-            className={`calculator-card ${calculatorType === "granite" ? "active" : ""}`}
-            onClick={() => setCalculatorType("granite")}
+            className={`calculator-card ${
+              calculatorType === "granite"
+                ? "active"
+                : ""
+            }`}
+            onClick={() =>
+              setCalculatorType("granite")
+            }
           >
-
             🪨
             <h4>Granite</h4>
-            <p>Stone Pieces Calculator</p>
-
           </div>
 
-
           <div
-            className={`calculator-card ${calculatorType === "kadappa" ? "active" : ""}`}
-            onClick={() => setCalculatorType("kadappa")}
+            className={`calculator-card ${
+              calculatorType === "kadapa"
+                ? "active"
+                : ""
+            }`}
+            onClick={() =>
+              setCalculatorType("kadapa")
+            }
           >
-
             🧱
-            <h4>Kadappa</h4>
-            <p>Coming Soon</p>
-
+            <h4>Kadapa</h4>
           </div>
-
-
-          <div
-            className={`calculator-card ${calculatorType === "tiles" ? "active" : ""}`}
-            onClick={() => setCalculatorType("tiles")}
-          >
-
-            ⬜
-            <h4>Tiles</h4>
-            <p>Area Tiles Calculator</p>
-
-          </div>
-
         </div>
-
       </div>
 
-      {/* TABLE */}
-
+      {/* GRANITE */}
       {calculatorType === "granite" && (
-
         <GraniteCalculator
-
-          rows={rows}
-          handleChange={handleChange}
+          rows={graniteRows}
+          handleChange={handleGraniteChange}
           inputRefs={inputRefs}
-          autoJump={autoJump}
-          focusNext={focusNext}
-          deleteRow={deleteRow}
-          addRow={addRow}
-          rate={rate}
-          setRate={setRate}
-          totalSqft={totalSqft}
-          grandTotal={grandTotal}
-          downloadPDF={downloadPDF}
-          shareWhatsAppPDF={shareWhatsAppPDF}
-
+          deleteRow={(i) =>
+            deleteRow(
+              graniteRows,
+              setGraniteRows,
+              i
+            )
+          }
+          addRow={() =>
+            addRow(
+              graniteRows,
+              setGraniteRows
+            )
+          }
+          rate={graniteRate}
+          setRate={setGraniteRate}
+          totalSqft={graniteSqft}
+          grandTotal={graniteTotal}
         />
-
       )}
 
+      {/* KADAPA */}
+      {calculatorType === "kadapa" && (
+        <KadapaCalculator
+          rows={kadapaRows}
+          handleChange={handleKadapaChange}
+          inputRefs={inputRefs}
+          deleteRow={(i) =>
+            deleteRow(
+              kadapaRows,
+              setKadapaRows,
+              i
+            )
+          }
+          addRow={() =>
+            addRow(
+              kadapaRows,
+              setKadapaRows
+            )
+          }
+          rate={kadapaRate}
+          setRate={setKadapaRate}
+          totalSqft={kadapaSqft}
+          grandTotal={kadapaTotal}
+        />
+      )}
 
+      {/* ONE FINAL BUTTONS */}
+      <button
+        className="pdf-btn"
+        onClick={downloadPDF}
+      >
+        Download Final Estimate
+      </button>
 
-
-
-
-
+      <button
+        className="whatsapp-btn"
+        onClick={shareWhatsAppPDF}
+      >
+        🟢 Share Final Estimate
+      </button>
     </div>
   );
 }
-
-export default App;
