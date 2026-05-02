@@ -6,7 +6,8 @@ import "./App.css";
 
 import GraniteCalculator from "./components/GraniteCalculator";
 import KadapaCalculator from "./components/KadapaCalculator";
-import KotaCalculator from "./components/KotaCalculator"; 
+import KotaCalculator from "./components/KotaCalculator";
+import OtherCalculator from "./components/OtherCalculator";
 
 export default function App() {
   const createRows = (count = 10) =>
@@ -37,6 +38,16 @@ export default function App() {
   const [kotaRows, setKotaRows] = useState(createRows());
   const [kotaRate, setKotaRate] = useState("");
 
+  const [otherRows, setOtherRows] =
+    useState([
+      {
+        particular: "",
+        qty: 1,
+        rate: "",
+        total: 0
+      }
+    ]);
+
   const popularStones = [
     "Granite",
     "Granite - Pearl Black",
@@ -57,6 +68,8 @@ export default function App() {
   ========================= */
   const [kadapaRows, setKadapaRows] = useState(createRows());
   const [kadapaRate, setKadapaRate] = useState("");
+
+
 
   /* =========================
      COMMON HELPERS
@@ -104,6 +117,7 @@ export default function App() {
 
     setGraniteRows(updated);
   };
+
 
   /* =========================
      KADAPA FORMULA
@@ -161,6 +175,28 @@ export default function App() {
     setKotaRows(updated);
   };
 
+  const handleOtherChange = (
+    index,
+    field,
+    value
+  ) => {
+    const updated = [...otherRows];
+
+    updated[index][field] = value;
+
+    const qty =
+      parseFloat(updated[index].qty) || 0;
+
+    const rate =
+      parseFloat(updated[index].rate) || 0;
+
+    updated[index].total = (
+      qty * rate
+    ).toFixed(2);
+
+    setOtherRows(updated);
+  };
+
   /* =========================
      TOTALS
   ========================= */
@@ -191,9 +227,19 @@ export default function App() {
   const kotaTotal =
     kotaSqft * (parseFloat(kotaRate) || 0);
 
-      const finalGrandTotal =
-    graniteTotal + kadapaTotal + kotaTotal;
+  const otherTotal =
+    otherRows.reduce(
+      (sum, row) =>
+        sum +
+        parseFloat(row.total || 0),
+      0
+    );
 
+  const finalGrandTotal =
+    graniteTotal +
+    kadapaTotal +
+    kotaTotal +
+    otherTotal
   /* =========================
      PDF
   ========================= */
@@ -265,79 +311,119 @@ export default function App() {
     }
 
     /* KADAPA SECTION */
-   
-   /* KADAPA SECTION */
-const kadapaBody = [];
 
-kadapaRows.forEach((row) => {
-  if (parseFloat(row.sqft) > 0) {
-    kadapaBody.push([
-      `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
-      `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
-      row.qty,
-      row.sqft,
-    ]);
-  }
-});
+    /* KADAPA SECTION */
+    const kadapaBody = [];
 
-if (kadapaBody.length > 0) {
-  doc.setFont("helvetica", "bold");
-  doc.text("KADAPA", 14, currentY);
+    kadapaRows.forEach((row) => {
+      if (parseFloat(row.sqft) > 0) {
+        kadapaBody.push([
+          `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
+          `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
+          row.qty,
+          row.sqft,
+        ]);
+      }
+    });
 
-  autoTable(doc, {
-    startY: currentY + 3,
-    head: [["Length", "Breadth", "Qty", "Sq Ft"]],
-    body: kadapaBody,
-  });
+    if (kadapaBody.length > 0) {
+      doc.setFont("helvetica", "bold");
+      doc.text("KADAPA", 14, currentY);
 
-  currentY = doc.lastAutoTable.finalY + 8;
+      autoTable(doc, {
+        startY: currentY + 3,
+        head: [["Length", "Breadth", "Qty", "Sq Ft"]],
+        body: kadapaBody,
+      });
 
-  doc.text(`Kadapa Rate : Rs ${kadapaRate || 0}`, 14, currentY);
-  doc.text(
-    `Kadapa Total : Rs ${kadapaTotal.toFixed(2)}`,
-    110,
-    currentY
-  );
+      currentY = doc.lastAutoTable.finalY + 8;
 
-  currentY += 12;
-}
+      doc.text(`Kadapa Rate : Rs ${kadapaRate || 0}`, 14, currentY);
+      doc.text(
+        `Kadapa Total : Rs ${kadapaTotal.toFixed(2)}`,
+        110,
+        currentY
+      );
 
-/* KOTA SECTION */
-const kotaBody = [];
+      currentY += 12;
+    }
 
-kotaRows.forEach((row) => {
-  if (parseFloat(row.sqft) > 0) {
-    kotaBody.push([
-      `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
-      `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
-      row.qty,
-      row.sqft,
-    ]);
-  }
-});
+    /* KOTA SECTION */
+    const kotaBody = [];
 
-if (kotaBody.length > 0) {
-  doc.setFont("helvetica", "bold");
-  doc.text("KOTA", 14, currentY);
+    kotaRows.forEach((row) => {
+      if (parseFloat(row.sqft) > 0) {
+        kotaBody.push([
+          `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
+          `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
+          row.qty,
+          row.sqft,
+        ]);
+      }
+    });
 
-  autoTable(doc, {
-    startY: currentY + 3,
-    head: [["Length", "Breadth", "Qty", "Sq Ft"]],
-    body: kotaBody,
-  });
+    if (kotaBody.length > 0) {
+      doc.setFont("helvetica", "bold");
+      doc.text("KOTA", 14, currentY);
 
-  currentY = doc.lastAutoTable.finalY + 8;
+      autoTable(doc, {
+        startY: currentY + 3,
+        head: [["Length", "Breadth", "Qty", "Sq Ft"]],
+        body: kotaBody,
+      });
 
-  doc.text(`Kota Rate : Rs ${kotaRate || 0}`, 14, currentY);
-  doc.text(
-    `Kota Total : Rs ${kotaTotal.toFixed(2)}`,
-    110,
-    currentY
-  );
+      currentY = doc.lastAutoTable.finalY + 8;
 
-  currentY += 12;
-}
+      doc.text(`Kota Rate : Rs ${kotaRate || 0}`, 14, currentY);
+      doc.text(
+        `Kota Total : Rs ${kotaTotal.toFixed(2)}`,
+        110,
+        currentY
+      );
 
+      currentY += 12;
+    }
+
+
+    const otherBody = [];
+
+    otherRows.forEach((row) => {
+      if (parseFloat(row.total) > 0) {
+        otherBody.push([
+          row.particular,
+          row.qty,
+          row.rate,
+          row.total
+        ]);
+      }
+    });
+
+    if (otherBody.length > 0) {
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.text(
+        "OTHER",
+        14,
+        currentY
+      );
+
+      autoTable(doc, {
+        startY: currentY + 3,
+        head: [[
+          "Particular",
+          "Qty",
+          "Rate",
+          "Total"
+        ]],
+        body: otherBody
+      });
+
+      currentY =
+        doc.lastAutoTable.finalY + 10;
+    }
     /* FINAL TOTAL */
     doc.setFontSize(14);
     doc.text(
@@ -499,6 +585,19 @@ if (kotaBody.length > 0) {
             🟫
             <h4>Kota</h4>
           </div>
+
+          <div
+            className={`calculator-card ${calculatorType === "other"
+                ? "active"
+                : ""
+              }`}
+            onClick={() =>
+              setCalculatorType("other")
+            }
+          >
+            📦
+            <h4>Other</h4>
+          </div>
         </div>
       </div>
 
@@ -569,6 +668,34 @@ if (kotaBody.length > 0) {
           setRate={setKotaRate}
           totalSqft={kotaSqft}
           grandTotal={kotaTotal}
+        />
+      )}
+
+      {calculatorType === "other" && (
+        <OtherCalculator
+          rows={otherRows}
+          handleChange={
+            handleOtherChange
+          }
+          addRow={() =>
+            setOtherRows([
+              ...otherRows,
+              {
+                particular: "",
+                qty: 1,
+                rate: "",
+                total: 0
+              }
+            ])
+          }
+          deleteRow={(i) =>
+            setOtherRows(
+              otherRows.filter(
+                (_, x) => x !== i
+              )
+            )
+          }
+          totalAmount={otherTotal}
         />
       )}
 
