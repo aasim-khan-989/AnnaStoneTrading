@@ -27,10 +27,11 @@ export default function OtherCalculator({
           <tbody>
             {rows.map((row, i) => (
               <tr key={i}>
+                {/* PARTICULAR */}
                 <td>
                   <textarea
-                    className="calc-input"
-                    rows="2"
+                    className="other-textarea"
+                    rows="1"
                     value={row.particular}
                     onChange={(e) =>
                       handleChange(
@@ -39,12 +40,27 @@ export default function OtherCalculator({
                         e.target.value
                       )
                     }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+
+                        const qtyInputs =
+                          document.querySelectorAll(
+                            ".qty-nav"
+                          );
+
+                        if (qtyInputs[i]) {
+                          qtyInputs[i].focus();
+                        }
+                      }
+                    }}
                   />
                 </td>
 
+                {/* QTY */}
                 <td>
                   <input
-                    className="calc-input"
+                    className="calc-input qty-nav"
                     value={row.qty}
                     onChange={(e) =>
                       handleChange(
@@ -53,12 +69,27 @@ export default function OtherCalculator({
                         e.target.value
                       )
                     }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+
+                        const rateInputs =
+                          document.querySelectorAll(
+                            ".rate-nav"
+                          );
+
+                        if (rateInputs[i]) {
+                          rateInputs[i].focus();
+                        }
+                      }
+                    }}
                   />
                 </td>
 
+                {/* RATE */}
                 <td>
                   <input
-                    className="calc-input"
+                    className="calc-input rate-nav"
                     value={row.rate}
                     onChange={(e) =>
                       handleChange(
@@ -67,15 +98,56 @@ export default function OtherCalculator({
                         e.target.value
                       )
                     }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+
+                        const nextParticular =
+                          document.querySelectorAll(
+                            ".other-textarea"
+                          );
+
+                        if (
+                          nextParticular[i + 1]
+                        ) {
+                          nextParticular[
+                            i + 1
+                          ].focus();
+                        } else {
+                          addRow();
+
+                          setTimeout(() => {
+                            const updated =
+                              document.querySelectorAll(
+                                ".other-textarea"
+                              );
+
+                            if (
+                              updated[
+                                i + 1
+                              ]
+                            ) {
+                              updated[
+                                i + 1
+                              ].focus();
+                            }
+                          }, 100);
+                        }
+                      }
+                    }}
                   />
                 </td>
 
+                {/* TOTAL */}
                 <td>{row.total}</td>
 
+                {/* DELETE */}
                 <td>
                   <button
                     className="delete-btn"
-                    onClick={() => deleteRow(i)}
+                    onClick={() =>
+                      deleteRow(i)
+                    }
                   >
                     ✕
                   </button>
