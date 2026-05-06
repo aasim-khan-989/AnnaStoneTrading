@@ -55,20 +55,9 @@ export default function App() {
         .split("T")[0]
     );
 
-  const [stoneType, setStoneType] =
-    useState("");
 
-  const [customStoneType, setCustomStoneType] =
-    useState("");
 
-  const popularStones = [
-    "Granite",
-    "Granite - Pearl Black",
-    "Granite - Z Black",
-    "Granite - Telephone Black",
-    "Granite - Steel Black",
-    "Kadapa Stone",
-  ];
+ 
 
   /* =========================
      DATA
