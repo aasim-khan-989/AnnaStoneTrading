@@ -542,14 +542,9 @@ export default function App() {
             .finalY +
           8;
 
-        doc.text(
-          `Granite Total : Rs ${graniteTotal.toFixed(
-            2
-          )}`,
-          14,
-          currentY
-        );
-
+       doc.text(` @ Rate : Rs ${graniteRate || 0}`, 14, currentY);
+currentY += 6;
+doc.text(`Granite Total : Rs ${graniteTotal.toFixed(2)}`, 14, currentY);
         currentY += 10;
       }
 
