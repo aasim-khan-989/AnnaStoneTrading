@@ -1465,3 +1465,47 @@ transform:none;
 }
 
 }
+
+.saved-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px;
+margin:6px 0;
+background:#f8f9ff;
+border-radius:10px;
+}
+
+.action-btns button{
+margin-left:6px;
+padding:6px 10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.edit-btn{
+background:#4cafef;
+color:white;
+}
+
+.delete-btn{
+background:#ff4d4d;
+color:white;
+}
+
+.delete-btn{
+background:#ff4d4d;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+font-weight:600;
+}
+
+.delete-btn:hover{
+background:#e60000;
+}
+
+

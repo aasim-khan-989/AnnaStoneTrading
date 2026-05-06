@@ -151,11 +151,7 @@ Length
 
 </th>
 
-<th className="multiply-header">
 
-×
-
-</th>
 
 <th colSpan={showBreadthFt?2:1}>
 
@@ -515,15 +511,8 @@ Add Piece
 <div className="summary-top">
 
 <div className="total-sqft">
-
-<span>Total Sq Ft</span>
-
-<h2>
-
-{totalSqft.toFixed(2)}
-
-</h2>
-
+  <span>Total Sq Ft</span>
+  <h2>{(totalSqft || 0).toFixed(2)}</h2>
 </div>
 
 
@@ -561,7 +550,7 @@ Grand Total ₹
 
 <span>
 
-{grandTotal.toFixed(2)}
+{(grandTotal || 0).toFixed(2)}
 
 </span>
 

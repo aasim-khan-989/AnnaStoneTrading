@@ -70,11 +70,8 @@ export default function App() {
   /* =========================
      DATA
   ========================= */
-  const [graniteRows, setGraniteRows] =
-    useState(createRows());
-
-  const [graniteRate, setGraniteRate] =
-    useState("");
+const [graniteList, setGraniteList] = useState([]);
+const [activeGranite, setActiveGranite] = useState(null);
 
   const [kadapaRows, setKadapaRows] =
     useState(createRows());
@@ -123,66 +120,6 @@ export default function App() {
   /* =========================
      GRANITE FORMULA
   ========================= */
-  const handleGraniteChange = (
-    index,
-    field,
-    value
-  ) => {
-    const updated = [
-      ...graniteRows,
-    ];
-
-    updated[index][field] = value;
-
-    const lft =
-      parseFloat(
-        updated[index].lengthFt
-      ) || 0;
-
-    const lin =
-      parseFloat(
-        updated[index].lengthIn
-      ) || 0;
-
-    const bft =
-      parseFloat(
-        updated[index]
-          .breadthFt
-      ) || 0;
-
-    const bin =
-      parseFloat(
-        updated[index]
-          .breadthIn
-      ) || 0;
-
-    const qty =
-      parseFloat(
-        updated[index].qty
-      ) || 1;
-
-    if (
-      lft ||
-      lin ||
-      bft ||
-      bin
-    ) {
-      const L =
-        lft * 12 + lin + 1;
-
-      const B =
-        bft * 12 + bin + 1;
-
-      updated[index].sqft = (
-        ((L * B) / 144) *
-        qty
-      ).toFixed(2);
-    } else {
-      updated[index].sqft = 0;
-    }
-
-    setGraniteRows(updated);
-  };
 
   /* =========================
      KADAPA / KOTA
@@ -358,21 +295,17 @@ export default function App() {
   /* =========================
      TOTALS
   ========================= */
-  const graniteSqft =
-    graniteRows.reduce(
-      (sum, row) =>
-        sum +
-        parseFloat(
-          row.sqft || 0
-        ),
-      0
-    );
 
-  const graniteTotal =
-    graniteSqft *
-    (parseFloat(
-      graniteRate
-    ) || 0);
+  const graniteTotal = graniteList.reduce((sum, g) => {
+  const sqft = g.rows.reduce(
+    (s, r) => s + parseFloat(r.sqft || 0),
+    0
+  );
+
+  return sum + sqft * (parseFloat(g.rate) || 0);
+}, 0);
+
+  
 
   const kadapaSqft =
     kadapaRows.reduce(
@@ -475,78 +408,58 @@ export default function App() {
         42
       );
 
-      const finalStone =
-        stoneType ===
-        "custom"
-          ? customStoneType
-          : stoneType;
+      // const finalStone =
+      //   stoneType ===
+      //   "custom"
+      //     ? customStoneType
+      //     : stoneType;
 
-      if (finalStone) {
-        doc.text(
-          `Stone Type : ${finalStone}`,
-          14,
-          49
-        );
-      }
+      // if (finalStone) {
+      //   doc.text(
+      //     `Stone Type : ${finalStone}`,
+      //     14,
+      //     49
+      //   );
+      // }
 
       let currentY = 57;
 
       /* GRANITE */
-      const graniteBody =
-        [];
 
-      graniteRows.forEach(
-        (row) => {
-          if (
-            parseFloat(
-              row.sqft
-            ) > 0
-          ) {
-            graniteBody.push(
-              [
-                `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
-                `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
-                row.qty,
-                row.sqft,
-              ]
-            );
-          }
-        }
-      );
+  graniteList.forEach((g) => {
+  doc.text(`GRANITE : ${g.name}`, 14, currentY);
 
-      if (
-        graniteBody.length >
-        0
-      ) {
-        doc.text(
-          "GRANITE",
-          14,
-          currentY
-        );
+  const body = [];
 
-        autoTable(doc, {
-          startY:
-            currentY + 3,
-          head: [[
-            "Length",
-            "Breadth",
-            "Qty",
-            "Sq Ft",
-          ]],
-          body: graniteBody,
-        });
+  g.rows.forEach((row) => {
+    if (parseFloat(row.sqft) > 0) {
+      body.push([
+        `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
+        `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
+        row.qty,
+        row.sqft
+      ]);
+    }
+  });
 
-        currentY =
-          doc
-            .lastAutoTable
-            .finalY +
-          8;
+  autoTable(doc, {
+    startY: currentY + 3,
+    head: [["Length","Breadth","Qty","Sq Ft"]],
+    body
+  });
 
-       doc.text(` @ Rate : Rs ${graniteRate || 0}`, 14, currentY);
-currentY += 6;
-doc.text(`Granite Total : Rs ${graniteTotal.toFixed(2)}`, 14, currentY);
-        currentY += 10;
-      }
+  currentY = doc.lastAutoTable.finalY + 5;
+
+  const total =
+    g.rows.reduce((s,r)=>s+parseFloat(r.sqft||0),0) *
+    (parseFloat(g.rate)||0);
+
+  doc.text(`Rate : Rs ${g.rate}`, 14, currentY);
+  currentY += 5;
+  doc.text(`Total : Rs ${total.toFixed(2)}`, 14, currentY);
+
+  currentY += 10;
+});
 
       /* KADAPA */
       const kadapaBody =
@@ -724,13 +637,21 @@ doc.text(`Granite Total : Rs ${graniteTotal.toFixed(2)}`, 14, currentY);
 
       doc.setFontSize(14);
 
-      doc.text(
-        `FINAL GRAND TOTAL : Rs ${finalGrandTotal.toFixed(
-          2
-        )}`,
-        14,
-        currentY
-      );
+      doc.setFontSize(14);
+doc.setFont("helvetica", "bold");
+
+doc.text(
+  `FINAL GRAND TOTAL`,
+  14,
+  currentY
+);
+
+doc.text(
+  `Rs ${finalGrandTotal.toFixed(2)}`,
+  150,
+  currentY,
+  { align: "right" }
+);
 
       return doc.output(
         "blob"
@@ -795,6 +716,20 @@ doc.text(`Granite Total : Rs ${graniteTotal.toFixed(2)}`, 14, currentY);
         );
       }
     };
+
+let activeSqft = 0;
+let activeTotal = 0;
+
+if (activeGranite) {
+  activeSqft = activeGranite.rows.reduce(
+    (sum, row) => sum + parseFloat(row.sqft || 0),
+    0
+  );
+
+  activeTotal =
+    activeSqft *
+    (parseFloat(activeGranite.rate) || 0);
+}
 
   return (
     <div className="container">
@@ -868,7 +803,7 @@ doc.text(`Granite Total : Rs ${graniteTotal.toFixed(2)}`, 14, currentY);
       </div>
 
       {/* STONE */}
-      <div className="stone-type-wrapper">
+      {/* <div className="stone-type-wrapper">
         <label>
           Stone Type
         </label>
@@ -919,7 +854,7 @@ doc.text(`Granite Total : Rs ${graniteTotal.toFixed(2)}`, 14, currentY);
             }
           />
         )}
-      </div>
+      </div> */}
 
 
 
@@ -929,6 +864,7 @@ doc.text(`Granite Total : Rs ${graniteTotal.toFixed(2)}`, 14, currentY);
         <h3>Select Calculator</h3>
 
         <div className="calculator-grid">
+       
           <div
             className={`calculator-card ${calculatorType === "granite"
               ? "active"
@@ -980,30 +916,157 @@ doc.text(`Granite Total : Rs ${graniteTotal.toFixed(2)}`, 14, currentY);
       </div>
 
       {/* GRANITE */}
-      {calculatorType === "granite" && (
+      
+    {/* GRANITE */}
+
+{calculatorType === "granite" && (
+  <>
+    <button
+      className="add-btn"
+      onClick={() =>
+        setActiveGranite({
+          name: "",
+          rate: "",
+          rows: createRows()
+        })
+      }
+    >
+      + Add Granite
+    </button>
+
+    {graniteList.map((g, i) => (
+
+      <div className="saved-item" key={i}>
+  <div>
+    <b>{g.name}</b>
+    <span> ₹{g.rate}</span>
+  </div>
+
+  <div className="action-btns">
+    <button
+      className="edit-btn"
+      onClick={() => setActiveGranite({
+  ...g,
+  rows: g.rows.map(r => ({ ...r }))
+})}
+    >
+      ✏️ Edit
+    </button>
+
+    <button
+      className="delete-btn"
+      onClick={() =>
+        setGraniteList(graniteList.filter((_, x) => x !== i))
+      }
+    >
+      🗑 Delete
+    </button>
+  </div>
+</div>
+      
+    ))}
+
+    
+
+    {activeGranite && (
+      <>
+       <input
+  list="granite-options"
+  className="full-input"
+  placeholder="Enter Granite Name"
+  value={activeGranite.name}
+  onChange={(e) =>
+    setActiveGranite({
+      ...activeGranite,
+      name: e.target.value
+    })
+  }
+/>
+
+<datalist id="granite-options">
+  <option value="Pearl Black" />
+  <option value="Z Black" />
+  <option value="Telephone Black" />
+  <option value="Steel Grey" />
+  <option value="Color Granite" />
+</datalist>
+
+
+       
         <GraniteCalculator
-          rows={graniteRows}
-          handleChange={handleGraniteChange}
-          inputRefs={inputRefs}
-          deleteRow={(i) =>
-            deleteRow(
-              graniteRows,
-              setGraniteRows,
-              i
-            )
-          }
+          rows={activeGranite.rows}
+            inputRefs={inputRefs}  
+          handleChange={(index, field, value) => {
+            const updated = [...activeGranite.rows];
+            updated[index][field] = value;
+
+            const lft = parseFloat(updated[index].lengthFt) || 0;
+            const lin = parseFloat(updated[index].lengthIn) || 0;
+            const bft = parseFloat(updated[index].breadthFt) || 0;
+            const bin = parseFloat(updated[index].breadthIn) || 0;
+            const qty = parseFloat(updated[index].qty) || 1;
+
+            const L = lft * 12 + lin + 1;
+            const B = bft * 12 + bin + 1;
+
+            updated[index].sqft = (((L * B) / 144) * qty).toFixed(2);
+
+            setActiveGranite({
+              ...activeGranite,
+              rows: updated
+            });
+          }}
           addRow={() =>
-            addRow(
-              graniteRows,
-              setGraniteRows
-            )
+            setActiveGranite({
+              ...activeGranite,
+              rows: [
+                ...activeGranite.rows,
+                {
+                  lengthFt: "",
+                  lengthIn: "",
+                  breadthFt: "",
+                  breadthIn: "",
+                  qty: 1,
+                  sqft: 0
+                }
+              ]
+            })
           }
-          rate={graniteRate}
-          setRate={setGraniteRate}
-          totalSqft={graniteSqft}
-          grandTotal={graniteTotal}
+          deleteRow={(i) =>
+            setActiveGranite({
+              ...activeGranite,
+              rows: activeGranite.rows.filter((_, x) => x !== i)
+            })
+          }
+          rate={activeGranite.rate}
+          setRate={(r) =>
+            setActiveGranite({
+              ...activeGranite,
+              rate: r
+            })
+          }
+            totalSqft={activeSqft}
+  grandTotal={activeTotal}
         />
-      )}
+
+        <button
+          className="pdf-btn"
+          onClick={() => {
+            if (!activeGranite.name.trim()) {
+  alert("⚠️ Please enter Granite Name");
+  return;
+}
+
+            setGraniteList([...graniteList, activeGranite]);
+            setActiveGranite(null);
+          }}
+        >
+          Save Granite
+        </button>
+      </>
+    )}
+  </>
+)}
 
       {/* KADAPA */}
       {calculatorType === "kadapa" && (
