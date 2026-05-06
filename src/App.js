@@ -3,6 +3,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import React, { useRef, useState } from "react";
 import "./App.css";
+import EstimatePreview from "../src/components/EstimatePreview";
 
 import GraniteCalculator from "./components/GraniteCalculator";
 import KadapaCalculator from "./components/KadapaCalculator";
@@ -38,6 +39,8 @@ export default function App() {
   ========================= */
   const [calculatorType, setCalculatorType] =
     useState("granite");
+
+    const [showPreview, setShowPreview] = useState(false);
 
   const [customerName, setCustomerName] =
     useState("");
@@ -658,6 +661,8 @@ doc.text(
       );
     };
 
+
+
   const downloadPDF =
     () => {
       const blob =
@@ -1154,6 +1159,30 @@ if (activeGranite) {
       >
         🟢 Share Final Estimate
       </button>
+
+      {showPreview && (
+  <EstimatePreview
+    onClose={() => setShowPreview(false)}
+    customerName={customerName}
+    phoneNumber={phoneNumber}
+    invoiceDate={invoiceDate}
+    graniteList={graniteList}
+    kadapaRows={kadapaRows}
+    kadapaTotal={kadapaTotal}
+    kotaRows={kotaRows}
+    kotaTotal={kotaTotal}
+    otherRows={otherRows}
+    otherTotal={otherTotal}
+    finalGrandTotal={finalGrandTotal}
+  />
+)}
+
+    <button
+  className="preview-btn"
+  onClick={() => setShowPreview(true)}
+>
+  👁 Preview Estimate
+</button>
     </div>
   );
 }
