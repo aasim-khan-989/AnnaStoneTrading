@@ -1,3 +1,4 @@
+
 import React from "react";
 import "./Preview.css";
 
@@ -16,7 +17,7 @@ export default function EstimatePreview({
   finalGrandTotal
 }) {
 
-  const getSqftSum = (rows) =>
+  const getSqft = (rows) =>
     rows.reduce(
       (s, r) => s + parseFloat(r.sqft || 0),
       0
@@ -27,74 +28,329 @@ export default function EstimatePreview({
 
       <div className="preview-box">
 
-        <button className="close-btn" onClick={onClose}>
+        <button
+          className="close-btn"
+          onClick={onClose}
+        >
           ✕
         </button>
 
-        <h2>ANNA STONE ESTIMATE</h2>
+        <h1 className="preview-title">
+          ANNA STONE ESTIMATE
+        </h1>
 
-        <p>Customer: {customerName || "-"}</p>
-        <p>Phone: {phoneNumber || "-"}</p>
-        <p>Date: {invoiceDate}</p>
+        <div className="preview-client">
+          <p>
+            <strong>Customer:</strong>
+            {" "}
+            {customerName || "-"}
+          </p>
 
-        {/* GRANITE */}
-        {graniteList.map((g, i) => (
-          <div key={i} className="preview-section">
-            <h3>GRANITE : {g.name}</h3>
+          <p>
+            <strong>Phone:</strong>
+            {" "}
+            {phoneNumber || "-"}
+          </p>
 
-            {g.rows.map((r, j) =>
-              parseFloat(r.sqft) > 0 ? (
-                <div key={j} className="preview-row">
-                  {r.lengthFt}'{r.lengthIn}" × {r.breadthFt}'{r.breadthIn}" | Qty {r.qty} | {r.sqft} sqft
-                </div>
-              ) : null
-            )}
+          <p>
+            <strong>Date:</strong>
+            {" "}
+            {invoiceDate}
+          </p>
+        </div>
 
-            <p>Rate: ₹{g.rate}</p>
-            <p>
-              Total: ₹
-              {(
-                getSqftSum(g.rows) *
-                (parseFloat(g.rate) || 0)
-              ).toFixed(2)}
-            </p>
-          </div>
-        ))}
+        {/* ================= GRANITE ================= */}
 
-        {/* KADAPA */}
+        {graniteList.map((g, i) => {
+
+          const sqft =
+            getSqft(g.rows);
+
+          const total =
+            sqft *
+            (parseFloat(g.rate) || 0);
+
+          return (
+            <div
+              key={i}
+              className="preview-section"
+            >
+
+              <h2>
+                GRANITE : {g.name}
+              </h2>
+
+              <table className="preview-table">
+
+                <thead>
+                  <tr>
+                    <th>Measurement</th>
+                    <th>Qty</th>
+                    <th>SqFt</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  {g.rows.map((r, j) =>
+                    parseFloat(r.sqft) > 0 ? (
+                      <tr key={j}>
+
+                        <td>
+                          {r.lengthFt || 0}'
+                          {" "}
+                          {r.lengthIn || 0}"
+                          {" × "}
+                          {r.breadthFt || 0}'
+                          {" "}
+                          {r.breadthIn || 0}"
+                        </td>
+
+                        <td>{r.qty}</td>
+
+                        <td>{r.sqft}</td>
+
+                      </tr>
+                    ) : null
+                  )}
+
+                </tbody>
+              </table>
+
+              <div className="preview-summary">
+
+                <p>
+                  <strong>Total SqFt:</strong>
+                  {" "}
+                  {sqft.toFixed(2)}
+                </p>
+
+                <p>
+                  <strong>Rate:</strong>
+                  {" "}
+                  ₹{g.rate}
+                </p>
+
+                <p>
+                  <strong>Total Amount:</strong>
+                  {" "}
+                  ₹{total.toFixed(2)}
+                </p>
+
+              </div>
+
+            </div>
+          );
+        })}
+
+        {/* ================= KADAPA ================= */}
+
         {kadapaTotal > 0 && (
+
           <div className="preview-section">
-            <h3>KADAPA</h3>
-            <p>Total: ₹{kadapaTotal.toFixed(2)}</p>
+
+            <h2>KADAPA</h2>
+
+            <table className="preview-table">
+
+              <thead>
+                <tr>
+                  <th>Measurement</th>
+                  <th>Qty</th>
+                  <th>SqFt</th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                {kadapaRows.map((r, i) =>
+                  parseFloat(r.sqft) > 0 ? (
+                    <tr key={i}>
+
+                      <td>
+                        {r.lengthFt || 0}'
+                        {" "}
+                        {r.lengthIn || 0}"
+                        {" × "}
+                        {r.breadthFt || 0}'
+                        {" "}
+                        {r.breadthIn || 0}"
+                      </td>
+
+                      <td>{r.qty}</td>
+
+                      <td>{r.sqft}</td>
+
+                    </tr>
+                  ) : null
+                )}
+
+              </tbody>
+
+            </table>
+
+            <div className="preview-summary">
+
+              <p>
+                <strong>Total SqFt:</strong>
+                {" "}
+                {getSqft(kadapaRows).toFixed(2)}
+              </p>
+
+              <p>
+                <strong>Total Amount:</strong>
+                {" "}
+                ₹{kadapaTotal.toFixed(2)}
+              </p>
+
+            </div>
+
           </div>
         )}
 
-        {/* KOTA */}
+        {/* ================= KOTA ================= */}
+
         {kotaTotal > 0 && (
+
           <div className="preview-section">
-            <h3>KOTA</h3>
-            <p>Total: ₹{kotaTotal.toFixed(2)}</p>
+
+            <h2>KOTA</h2>
+
+            <table className="preview-table">
+
+              <thead>
+                <tr>
+                  <th>Measurement</th>
+                  <th>Qty</th>
+                  <th>SqFt</th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                {kotaRows.map((r, i) =>
+                  parseFloat(r.sqft) > 0 ? (
+                    <tr key={i}>
+
+                      <td>
+                        {r.lengthFt || 0}'
+                        {" "}
+                        {r.lengthIn || 0}"
+                        {" × "}
+                        {r.breadthFt || 0}'
+                        {" "}
+                        {r.breadthIn || 0}"
+                      </td>
+
+                      <td>{r.qty}</td>
+
+                      <td>{r.sqft}</td>
+
+                    </tr>
+                  ) : null
+                )}
+
+              </tbody>
+
+            </table>
+
+            <div className="preview-summary">
+
+              <p>
+                <strong>Total SqFt:</strong>
+                {" "}
+                {getSqft(kotaRows).toFixed(2)}
+              </p>
+
+              <p>
+                <strong>Total Amount:</strong>
+                {" "}
+                ₹{kotaTotal.toFixed(2)}
+              </p>
+
+            </div>
+
           </div>
         )}
 
-        {/* OTHER */}
+        {/* ================= OTHER ================= */}
+
         {otherTotal > 0 && (
+
           <div className="preview-section">
-            <h3>OTHER</h3>
-            {otherRows.map((r, i) =>
-              parseFloat(r.total) > 0 ? (
-                <div key={i}>
-                  {r.particular} | {r.qty} × ₹{r.rate} = ₹{r.total}
-                </div>
-              ) : null
-            )}
-            <p>Total: ₹{otherTotal.toFixed(2)}</p>
+
+            <h2>OTHER</h2>
+
+            <table className="preview-table">
+
+              <thead>
+                <tr>
+                  <th>Particular</th>
+                  <th>Qty</th>
+                  <th>Rate</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                {otherRows.map((r, i) =>
+                  parseFloat(r.total) > 0 ? (
+                    <tr key={i}>
+
+                      <td>{r.particular}</td>
+
+                      <td>{r.qty}</td>
+
+                      <td>₹{r.rate}</td>
+
+                      <td>
+                        ₹
+                        {parseFloat(r.total || 0).toFixed(2)}
+                      </td>
+
+                    </tr>
+                  ) : null
+                )}
+
+              </tbody>
+
+            </table>
+
+          
+<div className="preview-summary">
+
+  <p>
+    <strong>Items:</strong>
+    {" "}
+    {
+      otherRows.filter(
+        r => parseFloat(r.total) > 0
+      ).length
+    }
+  </p>
+
+  <p>
+    <strong>Other Total:</strong>
+    {" "}
+    ₹{otherTotal.toFixed(2)}
+  </p>
+
+</div>
           </div>
         )}
 
-        <h2 className="final-total">
-          Grand Total ₹ {finalGrandTotal.toFixed(2)}
-        </h2>
+        {/* ================= FINAL ================= */}
+
+        <div className="final-preview-total">
+
+          FINAL GRAND TOTAL
+
+          <span>
+            ₹{finalGrandTotal.toFixed(2)}
+          </span>
+
+        </div>
 
       </div>
     </div>

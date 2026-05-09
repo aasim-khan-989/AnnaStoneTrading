@@ -341,11 +341,9 @@ const [activeGranite, setActiveGranite] = useState(null);
       0
     );
 
-  const finalGrandTotal =
-    graniteTotal +
+  const finalGrandTotal =( graniteTotal +
     kadapaTotal +
-    kotaTotal +
-    otherTotal;
+    kotaTotal + otherTotal);
 
   /* =========================
      PDF
@@ -446,9 +444,34 @@ const [activeGranite, setActiveGranite] = useState(null);
     g.rows.reduce((s,r)=>s+parseFloat(r.sqft||0),0) *
     (parseFloat(g.rate)||0);
 
-  doc.text(`Rate : Rs ${g.rate}`, 14, currentY);
-  currentY += 5;
-  doc.text(`Total : Rs ${total.toFixed(2)}`, 14, currentY);
+  const sqftTotal =
+  g.rows.reduce(
+    (s, r) =>
+      s + parseFloat(r.sqft || 0),
+    0
+  );
+
+doc.text(
+  `Total SqFt : ${sqftTotal.toFixed(2)}`,
+  14,
+  currentY
+);
+
+currentY += 5;
+
+doc.text(
+  `Rate : Rs ${g.rate}`,
+  14,
+  currentY
+);
+
+currentY += 5;
+
+doc.text(
+  `Total Amount : Rs ${total.toFixed(2)}`,
+  14,
+  currentY
+);
 
   currentY += 10;
 });
@@ -504,13 +527,27 @@ const [activeGranite, setActiveGranite] = useState(null);
             .finalY +
           8;
 
-        doc.text(
-          `Kadapa Total : Rs ${kadapaTotal.toFixed(
-            2
-          )}`,
-          14,
-          currentY
-        );
+       doc.text(
+  `Total SqFt : ${kadapaSqft.toFixed(2)}`,
+  14,
+  currentY
+);
+
+currentY += 5;
+
+doc.text(
+  `Rate : Rs ${kadapaRate || 0}`,
+  14,
+  currentY
+);
+
+currentY += 5;
+
+doc.text(
+  `Kadapa Total : Rs ${kadapaTotal.toFixed(2)}`,
+  14,
+  currentY
+);
 
         currentY += 10;
       }
@@ -626,6 +663,14 @@ const [activeGranite, setActiveGranite] = useState(null);
             .finalY +
           8;
       }
+
+      doc.text(
+  `Other Total : Rs ${otherTotal.toFixed(2)}`,
+  14,
+  currentY
+);
+
+currentY += 10;
 
       doc.setFontSize(14);
 
