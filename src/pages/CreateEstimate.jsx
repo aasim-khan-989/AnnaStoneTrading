@@ -344,16 +344,29 @@ const [draftLoaded, setDraftLoaded] =
       draft.graniteList || []
     );
 
+    setActiveGranite(
+  draft.activeGranite || null
+);
+
     setKadapaList(
       draft.kadapaList || []
     );
+
+    setActiveKadapa(
+  draft.activeKadapa || null
+);
 
     setOtherRows(
       draft.otherRows || []
     );
 
+    setCalculatorType(
+  draft.calculatorType || "granite"
+);
+
   }
 
+  
   setDraftLoaded(true);
 
 }, [editingEstimate]);
@@ -365,31 +378,45 @@ useEffect(() => {
   if (!draftLoaded)
     return;
 
-  saveDraft({
+saveDraft({
 
-    customerName,
+  customerName,
 
-    phoneNumber,
+  phoneNumber,
 
-    invoiceDate,
+  invoiceDate,
 
-    graniteList,
+  graniteList,
 
-    kadapaList,
+  activeGranite,
 
-    otherRows
+  kadapaList,
 
-  });
+  activeKadapa,
+
+  otherRows,
+
+  calculatorType
+
+});
 
 }, [
 
   draftLoaded,
+
   customerName,
   phoneNumber,
   invoiceDate,
+
   graniteList,
+  activeGranite,
+
   kadapaList,
-  otherRows
+  activeKadapa,
+
+  otherRows,
+
+  calculatorType
 
 ]);
 
