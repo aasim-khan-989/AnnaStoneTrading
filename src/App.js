@@ -7,7 +7,6 @@ import EstimatePreview from "../src/components/EstimatePreview";
 
 import GraniteCalculator from "./components/GraniteCalculator";
 import KadapaCalculator from "./components/KadapaCalculator";
-import KotaCalculator from "./components/KotaCalculator";
 import OtherCalculator from "./components/OtherCalculator";
 
 export default function App() {
@@ -65,17 +64,12 @@ export default function App() {
 const [graniteList, setGraniteList] = useState([]);
 const [activeGranite, setActiveGranite] = useState(null);
 
-  const [kadapaRows, setKadapaRows] =
-    useState(createRows());
+const [kadapaList, setKadapaList] = useState([]);
 
-  const [kadapaRate, setKadapaRate] =
-    useState("");
+const [activeKadapa, setActiveKadapa] =
+  useState(null);
 
-  const [kotaRows, setKotaRows] =
-    useState(createRows());
 
-  const [kotaRate, setKotaRate] =
-    useState("");
 
   const [otherRows, setOtherRows] =
     useState(createOtherRows());
@@ -116,142 +110,8 @@ const [activeGranite, setActiveGranite] = useState(null);
   /* =========================
      KADAPA / KOTA
   ========================= */
-  const kadapaRound = (
-    inch
-  ) => {
-    if (inch <= 0)
-      return 0;
 
-    if (
-      inch >= 1 &&
-      inch <= 5
-    )
-      return 6;
 
-    return (
-      Math.floor(
-        inch / 6
-      ) *
-        6 +
-      6
-    );
-  };
-
-  const handleKadapaChange = (
-    index,
-    field,
-    value
-  ) => {
-    const updated = [
-      ...kadapaRows,
-    ];
-
-    updated[index][field] = value;
-
-    const lft =
-      parseFloat(
-        updated[index].lengthFt
-      ) || 0;
-
-    const lin =
-      parseFloat(
-        updated[index].lengthIn
-      ) || 0;
-
-    const bft =
-      parseFloat(
-        updated[index]
-          .breadthFt
-      ) || 0;
-
-    const bin =
-      parseFloat(
-        updated[index]
-          .breadthIn
-      ) || 0;
-
-    const qty =
-      parseFloat(
-        updated[index].qty
-      ) || 1;
-
-    const rawL =
-      lft * 12 + lin;
-
-    const rawB =
-      bft * 12 + bin;
-
-    const L =
-      kadapaRound(rawL);
-
-    const B =
-      kadapaRound(rawB);
-
-    updated[index].sqft = (
-      ((L * B) / 144) *
-      qty
-    ).toFixed(2);
-
-    setKadapaRows(updated);
-  };
-
-  const handleKotaChange = (
-    index,
-    field,
-    value
-  ) => {
-    const updated = [
-      ...kotaRows,
-    ];
-
-    updated[index][field] = value;
-
-    const lft =
-      parseFloat(
-        updated[index].lengthFt
-      ) || 0;
-
-    const lin =
-      parseFloat(
-        updated[index].lengthIn
-      ) || 0;
-
-    const bft =
-      parseFloat(
-        updated[index]
-          .breadthFt
-      ) || 0;
-
-    const bin =
-      parseFloat(
-        updated[index]
-          .breadthIn
-      ) || 0;
-
-    const qty =
-      parseFloat(
-        updated[index].qty
-      ) || 1;
-
-    const rawL =
-      lft * 12 + lin;
-
-    const rawB =
-      bft * 12 + bin;
-
-    const L =
-      kadapaRound(rawL);
-
-    const B =
-      kadapaRound(rawB);
-
-    updated[index].sqft = (
-      ((L * B) / 144) *
-      qty
-    ).toFixed(2);
-
-    setKotaRows(updated);
-  };
 
   /* =========================
      OTHER
@@ -297,39 +157,39 @@ const [activeGranite, setActiveGranite] = useState(null);
   return sum + sqft * (parseFloat(g.rate) || 0);
 }, 0);
 
+const kadapaRound = (inch) => {
+
+  if (inch <= 0) return 0;
+
+  const remainder = inch % 6;
+
+  if (remainder === 0) {
+    return inch + 6;
+  }
+
+  return inch + (6 - remainder);
+};
+
+const kadapaTotal =
   
+kadapaList.reduce((sum, k) => {
 
-  const kadapaSqft =
-    kadapaRows.reduce(
-      (sum, row) =>
-        sum +
-        parseFloat(
-          row.sqft || 0
-        ),
-      0
+    const sqft =
+      k.rows.reduce(
+        (s, r) =>
+          s + parseFloat(r.sqft || 0),
+        0
+      );
+
+    return (
+      sum +
+      sqft *
+        (parseFloat(k.rate) || 0)
     );
 
-  const kadapaTotal =
-    kadapaSqft *
-    (parseFloat(
-      kadapaRate
-    ) || 0);
+  }, 0);
 
-  const kotaSqft =
-    kotaRows.reduce(
-      (sum, row) =>
-        sum +
-        parseFloat(
-          row.sqft || 0
-        ),
-      0
-    );
 
-  const kotaTotal =
-    kotaSqft *
-    (parseFloat(
-      kotaRate
-    ) || 0);
 
   const otherTotal =
     otherRows.reduce(
@@ -342,8 +202,7 @@ const [activeGranite, setActiveGranite] = useState(null);
     );
 
   const finalGrandTotal =( graniteTotal +
-    kadapaTotal +
-    kotaTotal + otherTotal);
+    kadapaTotal  + otherTotal);
 
   /* =========================
      PDF
@@ -477,141 +336,81 @@ doc.text(
 });
 
       /* KADAPA */
-      const kadapaBody =
-        [];
+ 
+kadapaList.forEach((k) => {
 
-      kadapaRows.forEach(
-        (row) => {
-          if (
-            parseFloat(
-              row.sqft
-            ) > 0
-          ) {
-            kadapaBody.push(
-              [
-                `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
-                `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
-                row.qty,
-                row.sqft,
-              ]
-            );
-          }
-        }
-      );
+  doc.text(
+    `KADAPA / KOTA : ${k.name}`,
+    14,
+    currentY
+  );
 
-      if (
-        kadapaBody.length >
-        0
-      ) {
-        doc.text(
-          "KADAPA",
-          14,
-          currentY
-        );
+  const body = [];
 
-        autoTable(doc, {
-          startY:
-            currentY + 3,
-          head: [[
-            "Length",
-            "Breadth",
-            "Qty",
-            "Sq Ft",
-          ]],
-          body: kadapaBody,
-        });
+  k.rows.forEach((row) => {
 
-        currentY =
-          doc
-            .lastAutoTable
-            .finalY +
-          8;
+    if (parseFloat(row.sqft) > 0) {
 
-       doc.text(
-  `Total SqFt : ${kadapaSqft.toFixed(2)}`,
-  14,
-  currentY
-);
+      body.push([
+        `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
+        `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
+        row.qty,
+        row.sqft
+      ]);
 
-currentY += 5;
+    }
 
-doc.text(
-  `Rate : Rs ${kadapaRate || 0}`,
-  14,
-  currentY
-);
+  });
 
-currentY += 5;
+  autoTable(doc, {
+    startY: currentY + 3,
+    head: [["Length","Breadth","Qty","Sq Ft"]],
+    body
+  });
 
-doc.text(
-  `Kadapa Total : Rs ${kadapaTotal.toFixed(2)}`,
-  14,
-  currentY
-);
+  currentY =
+    doc.lastAutoTable.finalY + 5;
 
-        currentY += 10;
-      }
+  const sqftTotal =
+    k.rows.reduce(
+      (s, r) =>
+        s + parseFloat(r.sqft || 0),
+      0
+    );
 
-      /* KOTA */
-      const kotaBody =
-        [];
+  const total =
+    sqftTotal *
+    (parseFloat(k.rate) || 0);
 
-      kotaRows.forEach(
-        (row) => {
-          if (
-            parseFloat(
-              row.sqft
-            ) > 0
-          ) {
-            kotaBody.push(
-              [
-                `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
-                `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
-                row.qty,
-                row.sqft,
-              ]
-            );
-          }
-        }
-      );
+  doc.text(
+    `Total SqFt : ${sqftTotal.toFixed(2)}`,
+    14,
+    currentY
+  );
 
-      if (
-        kotaBody.length > 0
-      ) {
-        doc.text(
-          "KOTA",
-          14,
-          currentY
-        );
+  currentY += 5;
 
-        autoTable(doc, {
-          startY:
-            currentY + 3,
-          head: [[
-            "Length",
-            "Breadth",
-            "Qty",
-            "Sq Ft",
-          ]],
-          body: kotaBody,
-        });
+  doc.text(
+    `Rate : Rs ${k.rate}`,
+    14,
+    currentY
+  );
 
-        currentY =
-          doc
-            .lastAutoTable
-            .finalY +
-          8;
+  currentY += 5;
 
-        doc.text(
-          `Kota Total : Rs ${kotaTotal.toFixed(
-            2
-          )}`,
-          14,
-          currentY
-        );
+  doc.text(
+    `Total Amount : Rs ${total.toFixed(2)}`,
+    14,
+    currentY
+  );
 
-        currentY += 10;
-      }
+  currentY += 10;
+
+});
+      
+
+
+
 
       /* OTHER */
       const otherBody =
@@ -841,59 +640,6 @@ if (activeGranite) {
         />
       </div>
 
-      {/* STONE */}
-      {/* <div className="stone-type-wrapper">
-        <label>
-          Stone Type
-        </label>
-
-        <select
-          className="full-input"
-          value={stoneType}
-          onChange={(e) =>
-            setStoneType(
-              e.target.value
-            )
-          }
-        >
-          <option value="">
-            Select
-          </option>
-
-          {popularStones.map(
-            (
-              stone,
-              i
-            ) => (
-              <option
-                key={i}
-              >
-                {stone}
-              </option>
-            )
-          )}
-
-          <option value="custom">
-            Custom
-          </option>
-        </select>
-
-        {stoneType ===
-          "custom" && (
-          <input
-            className="full-input"
-            placeholder="Enter stone"
-            value={
-              customStoneType
-            }
-            onChange={(e) =>
-              setCustomStoneType(
-                e.target.value
-              )
-            }
-          />
-        )}
-      </div> */}
 
 
 
@@ -918,27 +664,23 @@ if (activeGranite) {
           </div>
 
           <div
-            className={`calculator-card ${calculatorType === "kadapa"
-              ? "active"
-              : ""
-              }`}
-            onClick={() =>
-              setCalculatorType("kadapa")
-            }
-          >
-            🧱
-            <h4>Kadapa</h4>
-          </div>
+  className={`calculator-card ${
+    calculatorType === "kadapa"
+      ? "active"
+      : ""
+  }`}
+  onClick={() =>
+    setCalculatorType("kadapa")
+  }
+>
+  🧱
+  <h4>Kadapa / Kota</h4>
+</div>
 
-          <div
-            className={`calculator-card ${calculatorType === "kota" ? "active" : ""
-              }`}
-            onClick={() => setCalculatorType("kota")}
-          >
-            🟫
-            <h4>Kota</h4>
-          </div>
 
+
+
+  
           <div
             className={`calculator-card ${calculatorType === "other"
                 ? "active"
@@ -956,7 +698,7 @@ if (activeGranite) {
 
       {/* GRANITE */}
       
-    {/* GRANITE */}
+
 
 {calculatorType === "granite" && (
   <>
@@ -1107,49 +849,220 @@ if (activeGranite) {
   </>
 )}
 
-      {/* KADAPA */}
-      {calculatorType === "kadapa" && (
-        <KadapaCalculator
-          rows={kadapaRows}
-          handleChange={handleKadapaChange}
-          inputRefs={inputRefs}
-          deleteRow={(i) =>
-            deleteRow(
-              kadapaRows,
-              setKadapaRows,
-              i
-            )
-          }
-          addRow={() =>
-            addRow(
-              kadapaRows,
-              setKadapaRows
-            )
-          }
-          rate={kadapaRate}
-          setRate={setKadapaRate}
-          totalSqft={kadapaSqft}
-          grandTotal={kadapaTotal}
-        />
-      )}
+{calculatorType === "kadapa" && (
+  <>
 
-      {calculatorType === "kota" && (
-        <KotaCalculator
-          rows={kotaRows}
-          handleChange={handleKotaChange}
-          inputRefs={inputRefs}
-          deleteRow={(i) =>
-            deleteRow(kotaRows, setKotaRows, i)
+    <button
+      className="add-btn"
+      onClick={() =>
+        setActiveKadapa({
+          name: "",
+          rate: "",
+          rows: createRows()
+        })
+      }
+    >
+      + Add Kadapa / Kota
+    </button>
+
+    {kadapaList.map((k, i) => (
+
+      <div className="saved-item" key={i}>
+
+        <div>
+          <b>{k.name}</b>
+          <span> ₹{k.rate}</span>
+        </div>
+
+        <div className="action-btns">
+
+          <button
+            className="edit-btn"
+            onClick={() =>
+              setActiveKadapa({
+                ...k,
+                rows: k.rows.map(r => ({ ...r }))
+              })
+            }
+          >
+            ✏️ Edit
+          </button>
+
+          <button
+            className="delete-btn"
+            onClick={() =>
+              setKadapaList(
+                kadapaList.filter((_, x) => x !== i)
+              )
+            }
+          >
+            🗑 Delete
+          </button>
+
+        </div>
+
+      </div>
+
+    ))}
+
+    {activeKadapa && (
+      <>
+
+        <input
+          list="kadapa-options"
+          className="full-input"
+          placeholder="Enter Kadapa / Kota Name"
+          value={activeKadapa.name}
+          onChange={(e) =>
+            setActiveKadapa({
+              ...activeKadapa,
+              name: e.target.value
+            })
           }
-          addRow={() =>
-            addRow(kotaRows, setKotaRows)
-          }
-          rate={kotaRate}
-          setRate={setKotaRate}
-          totalSqft={kotaSqft}
-          grandTotal={kotaTotal}
         />
-      )}
+
+        <datalist id="kadapa-options">
+          <option value="Kadapa" />
+          <option value="Kadapa Polish" />
+          <option value="Kota" />
+        </datalist>
+
+        <KadapaCalculator
+          rows={activeKadapa.rows}
+          inputRefs={inputRefs}
+
+          handleChange={(index, field, value) => {
+
+            const updated = [
+              ...activeKadapa.rows
+            ];
+
+            updated[index][field] = value;
+
+            const lft =
+              parseFloat(updated[index].lengthFt) || 0;
+
+            const lin =
+              parseFloat(updated[index].lengthIn) || 0;
+
+            const bft =
+              parseFloat(updated[index].breadthFt) || 0;
+
+            const bin =
+              parseFloat(updated[index].breadthIn) || 0;
+
+            const qty =
+              parseFloat(updated[index].qty) || 1;
+
+            const rawL =
+              lft * 12 + lin;
+
+            const rawB =
+              bft * 12 + bin;
+
+            const L = kadapaRound(rawL);
+
+            const B = kadapaRound(rawB);
+
+            updated[index].sqft = (
+              ((L * B) / 144) * qty
+            ).toFixed(2);
+
+            setActiveKadapa({
+              ...activeKadapa,
+              rows: updated
+            });
+
+          }}
+
+          addRow={() =>
+            setActiveKadapa({
+              ...activeKadapa,
+              rows: [
+                ...activeKadapa.rows,
+                {
+                  lengthFt: "",
+                  lengthIn: "",
+                  breadthFt: "",
+                  breadthIn: "",
+                  qty: 1,
+                  sqft: 0
+                }
+              ]
+            })
+          }
+
+          deleteRow={(i) =>
+            setActiveKadapa({
+              ...activeKadapa,
+              rows:
+                activeKadapa.rows.filter(
+                  (_, x) => x !== i
+                )
+            })
+          }
+
+          rate={activeKadapa.rate}
+
+          setRate={(r) =>
+            setActiveKadapa({
+              ...activeKadapa,
+              rate: r
+            })
+          }
+
+          totalSqft={
+            activeKadapa.rows.reduce(
+              (sum, row) =>
+                sum +
+                parseFloat(row.sqft || 0),
+              0
+            )
+          }
+
+          grandTotal={
+            activeKadapa.rows.reduce(
+              (sum, row) =>
+                sum +
+                parseFloat(row.sqft || 0),
+              0
+            ) *
+            (parseFloat(activeKadapa.rate) || 0)
+          }
+
+        />
+
+        <button
+          className="pdf-btn"
+          onClick={() => {
+
+            if (!activeKadapa.name.trim()) {
+
+              alert(
+                "⚠️ Please enter Kadapa / Kota Name"
+              );
+
+              return;
+            }
+
+            setKadapaList([
+              ...kadapaList,
+              activeKadapa
+            ]);
+
+            setActiveKadapa(null);
+
+          }}
+        >
+          Save Kadapa / Kota
+        </button>
+
+      </>
+    )}
+
+  </>
+)}
+
 
       {calculatorType === "other" && (
         <OtherCalculator
@@ -1201,10 +1114,8 @@ if (activeGranite) {
     phoneNumber={phoneNumber}
     invoiceDate={invoiceDate}
     graniteList={graniteList}
-    kadapaRows={kadapaRows}
-    kadapaTotal={kadapaTotal}
-    kotaRows={kotaRows}
-    kotaTotal={kotaTotal}
+    kadapaList={kadapaList}
+
     otherRows={otherRows}
     otherTotal={otherTotal}
     finalGrandTotal={finalGrandTotal}

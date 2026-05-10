@@ -8,10 +8,7 @@ export default function EstimatePreview({
   phoneNumber,
   invoiceDate,
   graniteList,
-  kadapaRows,
-  kadapaTotal,
-  kotaRows,
-  kotaTotal,
+kadapaList,
   otherRows,
   otherTotal,
   finalGrandTotal
@@ -145,133 +142,93 @@ export default function EstimatePreview({
 
         {/* ================= KADAPA ================= */}
 
-        {kadapaTotal > 0 && (
+{kadapaList.map((k, i) => {
 
-          <div className="preview-section">
+  const sqft =
+    getSqft(k.rows);
 
-            <h2>KADAPA</h2>
+  const total =
+    sqft *
+    (parseFloat(k.rate) || 0);
 
-            <table className="preview-table">
+  return (
 
-              <thead>
-                <tr>
-                  <th>Measurement</th>
-                  <th>Qty</th>
-                  <th>SqFt</th>
-                </tr>
-              </thead>
+    <div
+      key={i}
+      className="preview-section"
+    >
 
-              <tbody>
+      <h2>
+        KADAPA / KOTA : {k.name}
+      </h2>
 
-                {kadapaRows.map((r, i) =>
-                  parseFloat(r.sqft) > 0 ? (
-                    <tr key={i}>
+      <table className="preview-table">
 
-                      <td>
-                        {r.lengthFt || 0}'
-                        {" "}
-                        {r.lengthIn || 0}"
-                        {" × "}
-                        {r.breadthFt || 0}'
-                        {" "}
-                        {r.breadthIn || 0}"
-                      </td>
+        <thead>
+          <tr>
+            <th>Measurement</th>
+            <th>Qty</th>
+            <th>SqFt</th>
+          </tr>
+        </thead>
 
-                      <td>{r.qty}</td>
+        <tbody>
 
-                      <td>{r.sqft}</td>
+          {k.rows.map((r, j) =>
+            parseFloat(r.sqft) > 0 ? (
+              <tr key={j}>
 
-                    </tr>
-                  ) : null
-                )}
+                <td>
+                  {r.lengthFt || 0}'
+                  {" "}
+                  {r.lengthIn || 0}"
+                  {" × "}
+                  {r.breadthFt || 0}'
+                  {" "}
+                  {r.breadthIn || 0}"
+                </td>
 
-              </tbody>
+                <td>{r.qty}</td>
 
-            </table>
+                <td>{r.sqft}</td>
 
-            <div className="preview-summary">
+              </tr>
+            ) : null
+          )}
 
-              <p>
-                <strong>Total SqFt:</strong>
-                {" "}
-                {getSqft(kadapaRows).toFixed(2)}
-              </p>
+        </tbody>
 
-              <p>
-                <strong>Total Amount:</strong>
-                {" "}
-                ₹{kadapaTotal.toFixed(2)}
-              </p>
+      </table>
 
-            </div>
+      <div className="preview-summary">
 
-          </div>
-        )}
+        <p>
+          <strong>Total SqFt:</strong>
+          {" "}
+          {sqft.toFixed(2)}
+        </p>
 
-        {/* ================= KOTA ================= */}
+        <p>
+          <strong>Rate:</strong>
+          {" "}
+          ₹{k.rate}
+        </p>
 
-        {kotaTotal > 0 && (
+        <p>
+          <strong>Total Amount:</strong>
+          {" "}
+          ₹{total.toFixed(2)}
+        </p>
 
-          <div className="preview-section">
+      </div>
 
-            <h2>KOTA</h2>
+    </div>
 
-            <table className="preview-table">
+  );
 
-              <thead>
-                <tr>
-                  <th>Measurement</th>
-                  <th>Qty</th>
-                  <th>SqFt</th>
-                </tr>
-              </thead>
+})}
 
-              <tbody>
 
-                {kotaRows.map((r, i) =>
-                  parseFloat(r.sqft) > 0 ? (
-                    <tr key={i}>
-
-                      <td>
-                        {r.lengthFt || 0}'
-                        {" "}
-                        {r.lengthIn || 0}"
-                        {" × "}
-                        {r.breadthFt || 0}'
-                        {" "}
-                        {r.breadthIn || 0}"
-                      </td>
-
-                      <td>{r.qty}</td>
-
-                      <td>{r.sqft}</td>
-
-                    </tr>
-                  ) : null
-                )}
-
-              </tbody>
-
-            </table>
-
-            <div className="preview-summary">
-
-              <p>
-                <strong>Total SqFt:</strong>
-                {" "}
-                {getSqft(kotaRows).toFixed(2)}
-              </p>
-
-              <p>
-                <strong>Total Amount:</strong>
-                {" "}
-                ₹{kotaTotal.toFixed(2)}
-              </p>
-
-            </div>
-
-          </div>
-        )}
 
         {/* ================= OTHER ================= */}
 
