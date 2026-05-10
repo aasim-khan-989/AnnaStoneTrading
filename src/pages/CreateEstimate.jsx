@@ -8,7 +8,10 @@ import React, {
 import {
   loadEstimates,
   saveEstimates,
-  getNextEstimateNumber
+  getNextEstimateNumber,
+  saveDraft,
+loadDraft,
+clearDraft
 } from "../storage/estimateStorage";
 
 import jsPDF from "jspdf";
@@ -262,9 +265,13 @@ const saveCurrentEstimate = () => {
       "✅ Estimate Updated"
     );
 
+    clearDraft();
+
   setEditingEstimate(null);
 
 setPage("home");
+
+
 
 return;
   }
@@ -298,9 +305,93 @@ return;
 
   alert(
     "✅ Estimate Saved"
+    
   );
+  clearDraft();
   setPage("home");
 };
+
+const [draftLoaded, setDraftLoaded] =
+  useState(false);
+
+  useEffect(() => {
+
+  if (editingEstimate) {
+
+    setDraftLoaded(true);
+
+    return;
+  }
+
+  const draft =
+    loadDraft();
+
+  if (draft) {
+
+    setCustomerName(
+      draft.customerName || ""
+    );
+
+    setPhoneNumber(
+      draft.phoneNumber || ""
+    );
+
+    setInvoiceDate(
+      draft.invoiceDate || ""
+    );
+
+    setGraniteList(
+      draft.graniteList || []
+    );
+
+    setKadapaList(
+      draft.kadapaList || []
+    );
+
+    setOtherRows(
+      draft.otherRows || []
+    );
+
+  }
+
+  setDraftLoaded(true);
+
+}, [editingEstimate]);
+
+loadDraft() 
+
+useEffect(() => {
+
+  if (!draftLoaded)
+    return;
+
+  saveDraft({
+
+    customerName,
+
+    phoneNumber,
+
+    invoiceDate,
+
+    graniteList,
+
+    kadapaList,
+
+    otherRows
+
+  });
+
+}, [
+
+  draftLoaded,
+  customerName,
+  phoneNumber,
+  invoiceDate,
+  graniteList,
+  kadapaList,
+  otherRows
+
+]);
 
   /* =========================
      PDF

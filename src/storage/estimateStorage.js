@@ -44,3 +44,35 @@ export const getNextEstimateNumber =
 
     return current;
 };
+
+const DRAFT_KEY =
+  "anna_stone_draft";
+
+export const saveDraft = (
+  draft
+) => {
+
+  localStorage.setItem(
+    DRAFT_KEY,
+    JSON.stringify(draft)
+  );
+};
+
+export const loadDraft = () => {
+
+  const data =
+    localStorage.getItem(
+      DRAFT_KEY
+    );
+
+  return data
+    ? JSON.parse(data)
+    : null;
+};
+
+export const clearDraft = () => {
+
+  localStorage.removeItem(
+    DRAFT_KEY
+  );
+};
