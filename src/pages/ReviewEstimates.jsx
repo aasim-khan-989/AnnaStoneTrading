@@ -49,6 +49,48 @@ setPreviewEstimate] =
     saveEstimates(updated);
   };
 
+  const shareEstimate = async (e) => {
+
+  const text = `🪨 ANNA STONE ESTIMATE
+
+Estimate #${e.estimateNumber}
+
+Customer : ${e.customerName || "-"}
+
+Phone : ${e.phoneNumber || "-"}
+
+Grand Total : ₹${e.finalGrandTotal.toFixed(2)}
+
+Thank you for choosing Anna Stone.
+`;
+
+  try {
+
+    if (navigator.share) {
+
+      await navigator.share({
+
+        title:
+          `Estimate #${e.estimateNumber}`,
+
+        text
+
+      });
+
+    } else {
+
+      alert(
+        "Sharing not supported on this device"
+      );
+    }
+
+  } catch (err) {
+
+    console.log(err);
+
+  }
+};
+
   return (
 
     <div className="container">
@@ -138,11 +180,16 @@ setPreviewEstimate] =
 >
   👁 Preview
 </button>
-  <button
-    className="action-btn share-action"
-  >
-    📤 Share
-  </button>
+
+
+<button
+  className="action-btn share-action"
+  onClick={() =>
+    shareEstimate(e)
+  }
+>
+  📤 Share
+</button>
 
   <button
     className="action-btn delete-action"

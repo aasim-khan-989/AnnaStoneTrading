@@ -262,9 +262,11 @@ const saveCurrentEstimate = () => {
       "✅ Estimate Updated"
     );
 
-    setEditingEstimate(null);
+  setEditingEstimate(null);
 
-    return;
+setPage("home");
+
+return;
   }
 
   const estimate = {
@@ -297,6 +299,7 @@ const saveCurrentEstimate = () => {
   alert(
     "✅ Estimate Saved"
   );
+  setPage("home");
 };
 
   /* =========================
