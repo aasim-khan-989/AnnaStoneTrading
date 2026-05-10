@@ -77,31 +77,7 @@ const [activeKadapa, setActiveKadapa] =
   /* =========================
      HELPERS
   ========================= */
-  const addRow = (rows, setRows) => {
-    setRows([
-      ...rows,
-      {
-        lengthFt: "",
-        lengthIn: "",
-        breadthFt: "",
-        breadthIn: "",
-        qty: 1,
-        sqft: 0,
-      },
-    ]);
-  };
 
-  const deleteRow = (
-    rows,
-    setRows,
-    index
-  ) => {
-    setRows(
-      rows.filter(
-        (_, i) => i !== index
-      )
-    );
-  };
 
   /* =========================
      GRANITE FORMULA
@@ -161,6 +137,14 @@ const kadapaRound = (inch) => {
 
   if (inch <= 0) return 0;
 
+  if (inch <= 5) {
+    return 6;
+  }
+
+  if (inch >= 6 && inch <= 8) {
+    return 9;
+  }
+
   const remainder = inch % 6;
 
   if (remainder === 0) {
@@ -215,63 +199,57 @@ kadapaList.reduce((sum, k) => {
           format: "a4",
         });
 
-      doc.setFontSize(18);
-      doc.setFont(
-        "helvetica",
-        "bold"
-      );
+  doc.setFillColor(25, 25, 25);
 
-      doc.text(
-        "ANNA STONE ESTIMATE",
-        14,
-        18
-      );
+doc.rect(0, 0, 210, 30, "F");
 
-      doc.setFontSize(11);
-      doc.setFont(
-        "helvetica",
-        "normal"
-      );
+doc.setTextColor(255,255,255);
 
-      doc.text(
-        `Customer : ${
-          customerName ||
-          "-"
-        }`,
-        14,
-        28
-      );
+doc.setFontSize(20);
 
-      doc.text(
-        `Phone : ${
-          phoneNumber ||
-          "-"
-        }`,
-        14,
-        35
-      );
+doc.setFont(
+  "helvetica",
+  "bold"
+);
 
-      doc.text(
-        `Date : ${invoiceDate}`,
-        14,
-        42
-      );
+doc.text(
+  "ANNA STONE ESTIMATE",
+  14,
+  18
+);
 
-      // const finalStone =
-      //   stoneType ===
-      //   "custom"
-      //     ? customStoneType
-      //     : stoneType;
+doc.setTextColor(0,0,0);
 
-      // if (finalStone) {
-      //   doc.text(
-      //     `Stone Type : ${finalStone}`,
-      //     14,
-      //     49
-      //   );
-      // }
+doc.setFontSize(11);
 
-      let currentY = 57;
+doc.setFont(
+  "helvetica",
+  "normal"
+);
+
+doc.text(
+  `Customer : ${
+    customerName || "-"
+  }`,
+  14,
+  42
+);
+
+doc.text(
+  `Phone : ${
+    phoneNumber || "-"
+  }`,
+  14,
+  49
+);
+
+doc.text(
+  `Date : ${invoiceDate}`,
+  14,
+  56
+);
+
+let currentY = 68;
 
       /* GRANITE */
 
@@ -292,6 +270,18 @@ kadapaList.reduce((sum, k) => {
   });
 
   autoTable(doc, {
+    theme: "grid",
+
+styles: {
+  fontSize: 10,
+  cellPadding: 3
+},
+
+headStyles: {
+  fillColor: [35,35,35],
+  textColor: 255,
+  fontStyle: "bold"
+},
     startY: currentY + 3,
     head: [["Length","Breadth","Qty","Sq Ft"]],
     body
@@ -310,26 +300,34 @@ kadapaList.reduce((sum, k) => {
     0
   );
 
+doc.setFont(
+  "helvetica",
+  "bold"
+);
+
 doc.text(
-  `Total SqFt : ${sqftTotal.toFixed(2)}`,
+  `SqFt : ${sqftTotal.toFixed(2)}`,
   14,
   currentY
 );
-
-currentY += 5;
 
 doc.text(
   `Rate : Rs ${g.rate}`,
-  14,
+  75,
   currentY
 );
 
-currentY += 5;
-
 doc.text(
-  `Total Amount : Rs ${total.toFixed(2)}`,
-  14,
+  `Total : Rs ${total.toFixed(2)}`,
+  140,
   currentY
+);
+
+currentY += 10;
+
+doc.setFont(
+  "helvetica",
+  "normal"
 );
 
   currentY += 10;
@@ -340,7 +338,7 @@ doc.text(
 kadapaList.forEach((k) => {
 
   doc.text(
-    `KADAPA / KOTA : ${k.name}`,
+    `${k.name}`,
     14,
     currentY
   );
@@ -363,6 +361,18 @@ kadapaList.forEach((k) => {
   });
 
   autoTable(doc, {
+    theme: "grid",
+
+styles: {
+  fontSize: 10,
+  cellPadding: 3
+},
+
+headStyles: {
+  fillColor: [35,35,35],
+  textColor: 255,
+  fontStyle: "bold"
+},
     startY: currentY + 3,
     head: [["Length","Breadth","Qty","Sq Ft"]],
     body
@@ -390,21 +400,35 @@ kadapaList.forEach((k) => {
 
   currentY += 5;
 
-  doc.text(
-    `Rate : Rs ${k.rate}`,
-    14,
-    currentY
-  );
+doc.setFont(
+  "helvetica",
+  "bold"
+);
 
-  currentY += 5;
+doc.text(
+  `SqFt : ${sqftTotal.toFixed(2)}`,
+  14,
+  currentY
+);
 
-  doc.text(
-    `Total Amount : Rs ${total.toFixed(2)}`,
-    14,
-    currentY
-  );
+doc.text(
+  `Rate : Rs ${k.rate}`,
+  75,
+  currentY
+);
 
-  currentY += 10;
+doc.text(
+  `Total : Rs ${total.toFixed(2)}`,
+  140,
+  currentY
+);
+
+currentY += 10;
+
+doc.setFont(
+  "helvetica",
+  "normal"
+);
 
 });
       
@@ -445,6 +469,18 @@ kadapaList.forEach((k) => {
         );
 
         autoTable(doc, {
+          theme: "grid",
+
+styles: {
+  fontSize: 10,
+  cellPadding: 3
+},
+
+headStyles: {
+  fillColor: [35,35,35],
+  textColor: 255,
+  fontStyle: "bold"
+},
           startY:
             currentY + 3,
           head: [[

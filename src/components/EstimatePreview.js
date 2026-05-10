@@ -159,7 +159,7 @@ kadapaList,
     >
 
       <h2>
-        KADAPA / KOTA : {k.name}
+      {k.name}
       </h2>
 
       <table className="preview-table">
