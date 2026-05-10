@@ -1,6 +1,6 @@
 
 import React from "react";
-import "./Preview.css";
+import "../styles/Preview.css";
 
 export default function EstimatePreview({
   onClose,
