@@ -1,0 +1,37 @@
+.mobile-scroll-tabs{
+
+display:flex !important;
+flex-direction:row !important;
+flex-wrap:nowrap !important;
+
+align-items:center;
+
+gap:12px;
+
+overflow-x:auto;
+overflow-y:hidden;
+
+width:100%;
+
+padding:10px 0;
+
+-webkit-overflow-scrolling:touch;
+
+scrollbar-width:none;
+}
+
+.mobile-scroll-tabs::-webkit-scrollbar{
+display:none;
+}
+
+/* FORCE CHILD ITEMS HORIZONTAL */
+.mobile-scroll-tabs > *{
+
+flex:0 0 auto !important;
+
+min-width:140px;
+
+width:auto !important;
+
+white-space:nowrap;
+}

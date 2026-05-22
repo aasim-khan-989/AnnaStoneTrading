@@ -1,3 +1,4 @@
+import "../styles/MobileCards.css";
 
 import React, {
   useRef,
@@ -952,10 +953,10 @@ useEffect(() => {
 
 
       {/* SELECTOR */}
-      <div className="calculator-selector">
+      <div className="calculator-selector ">
         <h3>Select Calculator</h3>
 
-        <div className="calculator-grid">
+        <div className="calculator-grid mobile-scroll-tabs">
        
           <div
             className={`calculator-card ${calculatorType === "granite"
@@ -1003,7 +1004,6 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* GRANITE */}
       
 
 
