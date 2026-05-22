@@ -122,7 +122,7 @@ export default function GraniteCalculator({
               <tr key={i}>
 
                 {showLengthFt && (
-                  <td>
+                  <td>  
                     <input
                       ref={el => inputRefs.current[i * 5] = el}
                       className="calc-input large-input"
