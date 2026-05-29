@@ -112,3 +112,163 @@ font-weight:600;
 margin-top:15px;
 }
 
+/* =========================
+   FINAL ACTION BUTTONS
+========================= */
+
+.final-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.final-btn {
+  flex: 1;
+
+  border: none;
+  border-radius: 12px;
+
+  padding: 14px 10px;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  color: white;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.final-btn:active {
+  transform: scale(0.98);
+}
+
+.save-btn {
+  background: #0057b8;
+}
+
+.download-btn {
+  background: #d97706;
+}
+
+.share-btn {
+  background: #16a34a;
+}
+
+.final-btn {
+  flex: 1;
+
+  border: none;
+  border-radius: 16px;
+
+  height: 68px;
+
+  font-size: 18px;
+  font-weight: 800;
+
+  color: white;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  box-shadow:
+    0 6px 18px rgba(0,0,0,.25);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.final-btn:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.3);
+}
+
+.final-btn:active {
+  transform: scale(.96);
+}
+
+.save-btn {
+  background: linear-gradient(
+    135deg,
+    #0066ff,
+    #0046b8
+  );
+}
+
+.download-btn {
+  background: linear-gradient(
+    135deg,
+    #ff9800,
+    #d97706
+  );
+}
+
+.share-btn {
+  background: linear-gradient(
+    135deg,
+    #22c55e,
+    #15803d
+  );
+}
+
+.final-actions {
+  display: flex;
+
+  gap: 12px;
+
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.modern-preview-btn {
+  width: 100%;
+
+  height: 68px;
+
+  margin-top: 25px;
+  margin-bottom: 15px;
+
+  border: none;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    135deg,
+    #374151,
+    #111827
+  );
+
+  color: white;
+
+  font-size: 18px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 18px rgba(0,0,0,.25);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.modern-preview-btn:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.3);
+}
+
+.modern-preview-btn:active {
+  transform: scale(.96);
+}
+

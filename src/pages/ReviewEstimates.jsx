@@ -49,7 +49,7 @@ setPreviewEstimate] =
     saveEstimates(updated);
   };
 
-  const shareEstimate = async (e) => {
+const shareEstimate = async (e) => {
 
   const text = `🪨 ANNA STONE ESTIMATE
 
@@ -61,36 +61,26 @@ Phone : ${e.phoneNumber || "-"}
 
 Grand Total : ₹${e.finalGrandTotal.toFixed(2)}
 
-Thank you for choosing Anna Stone.
-`;
+Thank you for choosing Anna Stone.`;
 
   try {
 
-    if (navigator.share) {
+    await navigator.share({
 
-      await navigator.share({
+      title:
+        `Estimate #${e.estimateNumber}`,
 
-        title:
-          `Estimate #${e.estimateNumber}`,
+      text
 
-        text
-
-      });
-
-    } else {
-
-      alert(
-        "Sharing not supported on this device"
-      );
-    }
+    });
 
   } catch (err) {
 
     console.log(err);
 
   }
-};
 
+};
   return (
 
     <div className="container">

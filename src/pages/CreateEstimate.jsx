@@ -803,57 +803,72 @@ const handleOtherChange = (
 
 
 
-    const downloadPDF =
-      () => {
-        const blob =
-          generatePDFBlob();
+ const downloadPDF = () => {
 
-        const url =
-          URL.createObjectURL(
-            blob
-          );
+  const blob =
+    generatePDFBlob();
 
-        const a =
-          document.createElement(
-            "a"
-          );
+  const url =
+    URL.createObjectURL(blob);
 
-        a.href = url;
-        a.download =
-          "AnnaStone_Estimate.pdf";
+  const a =
+    document.createElement("a");
 
-        a.click();
+  const safeName =
+    (customerName || "Customer")
+      .replace(/[^a-zA-Z0-9]/g, "_");
 
-        URL.revokeObjectURL(
-          url
-        );
-      };
+  const estimateNo =
+    editingEstimate?.estimateNumber ||
+    getNextEstimateNumber();
+
+  a.href = url;
+
+  a.download =
+    `Estimate_${estimateNo}_${safeName}.pdf`;
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
 
     const shareWhatsAppPDF =
       async () => {
         const blob =
           generatePDFBlob();
 
-        const file =
-          new File(
-            [blob],
-            "AnnaStone_Estimate.pdf",
-            {
-              type: "application/pdf",
-            }
-          );
+      const safeName =
+  (customerName || "Customer")
+    .replace(/[^a-zA-Z0-9]/g, "_");
+
+const estimateNo =
+  editingEstimate?.estimateNumber ||
+  getNextEstimateNumber();
+
+const file =
+  new File(
+    [blob],
+    `Estimate_${estimateNo}_${safeName}.pdf`,
+    {
+      type:
+        "application/pdf",
+    }
+  );
 
         if (
           navigator.share
         ) {
           try {
-            await navigator.share(
-              {
-                title:
-                  "Anna Stone Estimate",
-                files: [file],
-              }
-            );
+            await navigator.share({
+  title:
+    "Anna Stone Estimate",
+
+  text:
+    `Estimate for ${customerName}
+Total Amount ₹${finalGrandTotal.toFixed(2)}`,
+
+  files: [file]
+});
           } catch (e) { }
         } else {
           alert(
@@ -1604,27 +1619,30 @@ const handleOtherChange = (
           />
         )}
 
-        <button
-          className="pdf-btn"
-          onClick={saveCurrentEstimate}
-        >
-          💾 Save Estimate
-        </button>
+      <div className="final-actions">
 
-        {/* ONE FINAL BUTTONS */}
-        <button
-          className="pdf-btn"
-          onClick={downloadPDF}
-        >
-          Download Final Estimate
-        </button>
+  <button
+    className="final-btn save-btn"
+    onClick={saveCurrentEstimate}
+  >
+    💾 Save
+  </button>
 
-        <button
-          className="whatsapp-btn"
-          onClick={shareWhatsAppPDF}
-        >
-          🟢 Share Final Estimate
-        </button>
+  <button
+    className="final-btn download-btn"
+    onClick={downloadPDF}
+  >
+    📄 PDF
+  </button>
+
+  <button
+    className="final-btn share-btn"
+    onClick={shareWhatsAppPDF}
+  >
+    📲 Share
+  </button>
+
+</div>
 
         {showPreview && (
           <EstimatePreview
