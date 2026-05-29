@@ -59,31 +59,32 @@ export default function OtherCalculator({
 
                 {/* QTY */}
                 <td>
-                  <input
-                    className="calc-input qty-nav"
-                    value={row.qty}
-                    onChange={(e) =>
-                      handleChange(
-                        i,
-                        "qty",
-                        e.target.value
-                      )
-                    }
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
+              <input
+  className="calc-input qty-nav"
+  value={row.qty}
+  onFocus={(e) => e.target.select()}
+  onChange={(e) =>
+    handleChange(
+      i,
+      "qty",
+      e.target.value
+    )
+  }
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
 
-                        const rateInputs =
-                          document.querySelectorAll(
-                            ".rate-nav"
-                          );
+      const rateInputs =
+        document.querySelectorAll(
+          ".rate-nav"
+        );
 
-                        if (rateInputs[i]) {
-                          rateInputs[i].focus();
-                        }
-                      }
-                    }}
-                  />
+      if (rateInputs[i]) {
+        rateInputs[i].focus();
+      }
+    }
+  }}
+/>
                 </td>
 
                 {/* RATE */}

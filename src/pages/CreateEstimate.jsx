@@ -83,13 +83,13 @@
         sqft: 0,
       }));
 
-    const createOtherRows = (count = 10) =>
-      Array.from({ length: count }, () => ({
-        particular: "",
-        qty: 1,
-        rate: "",
-        total: 0,
-      }));
+    const createOtherRows = (count = 1) =>
+  Array.from({ length: count }, () => ({
+    particular: "",
+    qty: 1,
+    rate: "",
+    total: 0,
+  }));
 
     const inputRefs = useRef([]);
 
@@ -134,7 +134,7 @@
 
 
     const [otherRows, setOtherRows] =
-      useState(createOtherRows());
+  useState(createOtherRows(1));
 
     /* =========================
       HELPERS
@@ -154,34 +154,46 @@
     /* =========================
       OTHER
     ========================= */
-    const handleOtherChange = (
-      index,
-      field,
-      value
-    ) => {
-      const updated = [
-        ...otherRows,
-      ];
+const handleOtherChange = (
+  index,
+  field,
+  value
+) => {
+  const updated = [...otherRows];
 
-      updated[index][field] = value;
+  updated[index][field] = value;
 
-      const qty =
-        parseFloat(
-          updated[index].qty
-        ) || 0;
+  const qty =
+    parseFloat(updated[index].qty) || 0;
 
-      const rate =
-        parseFloat(
-          updated[index].rate
-        ) || 0;
+  const rate =
+    parseFloat(updated[index].rate) || 0;
 
-      updated[index].total = (
-        qty * rate
-      ).toFixed(2);
+  updated[index].total = (
+    qty * rate
+  ).toFixed(2);
 
-      setOtherRows(updated);
-    };
+  // AUTO ADD NEW ROW
+  const currentRow = updated[index];
 
+  const isFilled =
+    currentRow.particular?.trim() !== "" &&
+    currentRow.rate !== "";
+
+  if (
+    isFilled &&
+    index === updated.length - 1
+  ) {
+    updated.push({
+      particular: "",
+      qty: 1,
+      rate: "",
+      total: 0
+    });
+  }
+
+  setOtherRows(updated);
+};
     /* =========================
       TOTALS
     ========================= */
