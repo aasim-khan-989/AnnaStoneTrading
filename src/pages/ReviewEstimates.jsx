@@ -1,4 +1,7 @@
-
+import {
+shareEstimatePDF
+}
+from "../utils/shareEstimate";
 
 import React, {
   useEffect,
@@ -49,38 +52,6 @@ setPreviewEstimate] =
     saveEstimates(updated);
   };
 
-const shareEstimate = async (e) => {
-
-  const text = `🪨 ANNA STONE ESTIMATE
-
-Estimate #${e.estimateNumber}
-
-Customer : ${e.customerName || "-"}
-
-Phone : ${e.phoneNumber || "-"}
-
-Grand Total : ₹${e.finalGrandTotal.toFixed(2)}
-
-Thank you for choosing Anna Stone.`;
-
-  try {
-
-    await navigator.share({
-
-      title:
-        `Estimate #${e.estimateNumber}`,
-
-      text
-
-    });
-
-  } catch (err) {
-
-    console.log(err);
-
-  }
-
-};
   return (
 
     <div className="container">
@@ -175,7 +146,7 @@ Thank you for choosing Anna Stone.`;
 <button
   className="action-btn share-action"
   onClick={() =>
-    shareEstimate(e)
+    shareEstimatePDF(e)
   }
 >
   📤 Share
