@@ -22,10 +22,6 @@ from "../utils/shareEstimate";
     clearDraft
   } from "../storage/estimateStorage";
 
-  import jsPDF from "jspdf";
-
-  import autoTable
-    from "jspdf-autotable";
 
   import "../styles/App.css";
 
