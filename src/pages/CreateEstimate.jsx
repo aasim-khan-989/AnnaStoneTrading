@@ -522,186 +522,174 @@ const handleOtherChange = (
 
         let currentY = 68;
 
-        /* GRANITE */
+      /* GRANITE */
 
-        graniteList.forEach((g) => {
-          doc.text(`GRANITE : ${g.name}`, 14, currentY);
+graniteList.forEach((g) => {
 
-          const body = [];
+  // Heading
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text(`GRANITE : ${g.name}`, 14, currentY);
 
-          g.rows.forEach((row) => {
-            if (parseFloat(row.sqft) > 0) {
-              body.push([
-                `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
-                `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
-                row.qty,
-                row.sqft
-              ]);
-            }
-          });
+  // Note
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(8);
+  doc.text(
+    "Note: Measurements include a standard 1-inch cutting allowance.",
+    14,
+    currentY + 5
+  );
 
-          autoTable(doc, {
-            theme: "grid",
+  const body = [];
 
-            styles: {
-              fontSize: 10,
-              cellPadding: 3
-            },
+  g.rows.forEach((row) => {
+    if (parseFloat(row.sqft) > 0) {
+      body.push([
+        `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
+        `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
+        row.qty,
+        row.sqft
+      ]);
+    }
+  });
 
-            headStyles: {
-              fillColor: [35, 35, 35],
-              textColor: 255,
-              fontStyle: "bold"
-            },
-            startY: currentY + 3,
-            head: [["Length", "Breadth", "Qty", "Sq Ft"]],
-            body
-          });
+  autoTable(doc, {
+    theme: "grid",
 
-          currentY = doc.lastAutoTable.finalY + 5;
+    startY: currentY + 10,
 
-          const total =
-            g.rows.reduce((s, r) => s + parseFloat(r.sqft || 0), 0) *
-            (parseFloat(g.rate) || 0);
+    styles: {
+      fontSize: 10,
+      cellPadding: 3
+    },
 
-          const sqftTotal =
-            g.rows.reduce(
-              (s, r) =>
-                s + parseFloat(r.sqft || 0),
-              0
-            );
+    headStyles: {
+      fillColor: [35, 35, 35],
+      textColor: 255,
+      fontStyle: "bold"
+    },
 
-          doc.setFont(
-            "helvetica",
-            "bold"
-          );
+    head: [["Length", "Breadth", "Qty", "Sq Ft"]],
+    body
+  });
 
-          doc.text(
-            `SqFt : ${sqftTotal.toFixed(2)}`,
-            14,
-            currentY
-          );
+  currentY = doc.lastAutoTable.finalY + 8;
 
-          doc.text(
-            `Rate : Rs ${g.rate}`,
-            75,
-            currentY
-          );
+  const sqftTotal =
+    g.rows.reduce(
+      (s, r) => s + parseFloat(r.sqft || 0),
+      0
+    );
 
-          doc.text(
-            `Total : Rs ${total.toFixed(2)}`,
-            140,
-            currentY
-          );
+  const qtyTotal =
+    g.rows.reduce(
+      (s, r) => s + (parseFloat(r.qty) || 0),
+      0
+    );
 
-          currentY += 10;
+  const total =
+    sqftTotal *
+    (parseFloat(g.rate) || 0);
 
-          doc.setFont(
-            "helvetica",
-            "normal"
-          );
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
 
-          currentY += 10;
-        });
+  doc.text(`Qty : ${qtyTotal}`, 14, currentY);
+  doc.text(`SqFt : ${sqftTotal.toFixed(2)}`, 55, currentY);
+ doc.text(`Rate : Rs ${g.rate}`,110,currentY);
+doc.text(`Total : Rs ${total.toFixed(2)}`,160,currentY);
 
-        /* KADAPA */
+  currentY += 14;
 
-        kadapaList.forEach((k) => {
+});
 
-          doc.text(
-            `${k.name}`,
-            14,
-            currentY
-          );
+     /* KADAPA */
 
-          const body = [];
+kadapaList.forEach((k) => {
 
-          k.rows.forEach((row) => {
+  // Heading
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text(`${k.name}`, 14, currentY);
 
-            if (parseFloat(row.sqft) > 0) {
+  // Note
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(8);
+  doc.text(
+   "Note: Measurements include the standard Kadapa cutting allowance.",
+    14,
+    currentY + 5
+  );
 
-              body.push([
-                `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
-                `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
-                row.qty,
-                row.sqft
-              ]);
+  const body = [];
 
-            }
+  k.rows.forEach((row) => {
 
-          });
+    if (parseFloat(row.sqft) > 0) {
 
-          autoTable(doc, {
-            theme: "grid",
+      body.push([
+        `${row.lengthFt || 0}' ${row.lengthIn || 0}"`,
+        `${row.breadthFt || 0}' ${row.breadthIn || 0}"`,
+        row.qty,
+        row.sqft
+      ]);
 
-            styles: {
-              fontSize: 10,
-              cellPadding: 3
-            },
+    }
 
-            headStyles: {
-              fillColor: [35, 35, 35],
-              textColor: 255,
-              fontStyle: "bold"
-            },
-            startY: currentY + 3,
-            head: [["Length", "Breadth", "Qty", "Sq Ft"]],
-            body
-          });
+  });
 
-          currentY =
-            doc.lastAutoTable.finalY + 5;
+  autoTable(doc, {
 
-          const sqftTotal =
-            k.rows.reduce(
-              (s, r) =>
-                s + parseFloat(r.sqft || 0),
-              0
-            );
+    theme: "grid",
 
-          const total =
-            sqftTotal *
-            (parseFloat(k.rate) || 0);
+    startY: currentY + 10,
 
-          doc.text(
-            `Total SqFt : ${sqftTotal.toFixed(2)}`,
-            14,
-            currentY
-          );
+    styles: {
+      fontSize: 10,
+      cellPadding: 3
+    },
 
-          currentY += 5;
+    headStyles: {
+      fillColor: [35,35,35],
+      textColor:255,
+      fontStyle:"bold"
+    },
 
-          doc.setFont(
-            "helvetica",
-            "bold"
-          );
+    head: [["Length","Breadth","Qty","Sq Ft"]],
 
-          doc.text(
-            `SqFt : ${sqftTotal.toFixed(2)}`,
-            14,
-            currentY
-          );
+    body
 
-          doc.text(
-            `Rate : Rs ${k.rate}`,
-            75,
-            currentY
-          );
+  });
 
-          doc.text(
-            `Total : Rs ${total.toFixed(2)}`,
-            140,
-            currentY
-          );
+  currentY = doc.lastAutoTable.finalY + 8;
 
-          currentY += 10;
+  const sqftTotal =
+    k.rows.reduce(
+      (s,r)=>s+parseFloat(r.sqft||0),
+      0
+    );
 
-          doc.setFont(
-            "helvetica",
-            "normal"
-          );
+  const qtyTotal =
+    k.rows.reduce(
+      (s,r)=>s+(parseFloat(r.qty)||0),
+      0
+    );
 
-        });
+  const total =
+    sqftTotal *
+    (parseFloat(k.rate)||0);
+
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(10);
+
+  doc.text(`Qty : ${qtyTotal}`,14,currentY);
+  doc.text(`SqFt : ${sqftTotal.toFixed(2)}`,55,currentY);
+  doc.text(`Rate : Rs${k.rate}`,110,currentY);
+  doc.text(`Total : Rs${total.toFixed(2)}`,160,currentY);
+
+  currentY += 14;
+
+});
 
 
 

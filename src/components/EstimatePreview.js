@@ -19,6 +19,13 @@ kadapaList,
       (s, r) => s + parseFloat(r.sqft || 0),
       0
     );
+  
+    const getQty = (rows) =>
+  rows.reduce(
+    (sum, row) =>
+      sum + (parseFloat(row.qty) || 0),
+    0
+  );
 
   return (
     <div className="preview-overlay">
@@ -59,9 +66,11 @@ kadapaList,
         {/* ================= GRANITE ================= */}
 
         {graniteList.map((g, i) => {
+const qty =
+  getQty(g.rows);
 
-          const sqft =
-            getSqft(g.rows);
+const sqft =
+  getSqft(g.rows);
 
           const total =
             sqft *
@@ -114,28 +123,29 @@ kadapaList,
                 </tbody>
               </table>
 
-              <div className="preview-summary">
+<div className="preview-summary">
 
-                <p>
-                  <strong>Total SqFt:</strong>
-                  {" "}
-                  {sqft.toFixed(2)}
-                </p>
+  <p>
+    <strong>Total Qty:</strong>{" "}
+    {qty}
+  </p>
 
-                <p>
-                  <strong>Rate:</strong>
-                  {" "}
-                  ₹{g.rate}
-                </p>
+  <p>
+    <strong>Total SqFt:</strong>{" "}
+    {sqft.toFixed(2)}
+  </p>
 
-                <p>
-                  <strong>Total Amount:</strong>
-                  {" "}
-                  ₹{total.toFixed(2)}
-                </p>
+  <p>
+    <strong>Rate:</strong>{" "}
+    ₹{g.rate}
+  </p>
 
-              </div>
+  <p>
+    <strong>Total Amount:</strong>{" "}
+    ₹{total.toFixed(2)}
+  </p>
 
+</div>
             </div>
           );
         })}
@@ -144,8 +154,11 @@ kadapaList,
 
 {kadapaList.map((k, i) => {
 
-  const sqft =
-    getSqft(k.rows);
+  const qty =
+  getQty(k.rows);
+
+const sqft =
+  getSqft(k.rows);
 
   const total =
     sqft *
@@ -199,28 +212,29 @@ kadapaList,
         </tbody>
 
       </table>
+<div className="preview-summary">
 
-      <div className="preview-summary">
+  <p>
+    <strong>Total Qty:</strong>{" "}
+    {qty}
+  </p>
 
-        <p>
-          <strong>Total SqFt:</strong>
-          {" "}
-          {sqft.toFixed(2)}
-        </p>
+  <p>
+    <strong>Total SqFt:</strong>{" "}
+    {sqft.toFixed(2)}
+  </p>
 
-        <p>
-          <strong>Rate:</strong>
-          {" "}
-          ₹{k.rate}
-        </p>
+  <p>
+    <strong>Rate:</strong>{" "}
+    ₹{k.rate}
+  </p>
 
-        <p>
-          <strong>Total Amount:</strong>
-          {" "}
-          ₹{total.toFixed(2)}
-        </p>
+  <p>
+    <strong>Total Amount:</strong>{" "}
+    ₹{total.toFixed(2)}
+  </p>
 
-      </div>
+</div>
 
     </div>
 
